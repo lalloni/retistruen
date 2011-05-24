@@ -1,0 +1,53 @@
+@startuml
+
+Source ..> Variable: "set datum"
+
+Model o--> "*" Variable
+Model o--> "*" Study
+
+class Receiver {
+ +observe(o:Emitter, d:Datum)
+}
+ 
+class Emitter {
+ +register(s:Receiver)
+ +deregister(s:Receiver)
+}
+
+Emitter o--> Receiver
+
+Emitter <|-- Variable
+Emitter <|-- Study
+Receiver <|-- Study
+
+class Variable {
+  +name:String
+  +set(d:Datum)
+}
+
+Study --> "*" Variable
+Study <|-- Maximum
+Study <|-- Minimum
+Study <|-- Mean
+Study <|-- Median
+Study <|-- Variance
+Study <|-- Condition
+Study <|-- Window
+
+class Study {
+}
+
+Condition o--> "*" Action
+
+class Action {
+ +execute()
+}
+
+Action <|-- Email
+Action <|-- DeactivateAudit
+
+class Window {
+ +size:Int
+}
+
+@enduml
