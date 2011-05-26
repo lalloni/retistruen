@@ -6,9 +6,9 @@ import org.joda.time.ReadableInstant
 import scala.collection.immutable.Queue
 import scala.actors.Actor
 
-//case class Emit[T](datum: Datum[T])
-
-case class Datum[T](value: T, created: ReadableInstant = new Instant)
+case class Datum[T](value: T, created: ReadableInstant = new Instant) {
+  def fresh = Datum(value)
+}
 
 trait Named {
 
@@ -118,6 +118,18 @@ class BufferedMax[N: Ordering](val name: String, val size: Int) extends Buffered
 
 }
 
+class Max[N: Ordering](val name: String) extends UnbufferedFunctor[N, N] {
+
+  val o = implicitly[Ordering[N]]
+  import o._
+
+  def result(received: Datum[N]): Datum[N] = last match {
+    case Some(previous) ⇒ if (received.value > previous.value) received.fresh else previous.fresh
+    case None           ⇒ received.fresh
+  }
+
+}
+
 class RecordingReceiver[T](val name: String, val capacity: Option[Int] = None) extends Receiver[T] {
 
   private var buffer: Seq[Datum[T]] = Seq.empty
@@ -137,6 +149,33 @@ class RecordingReceiver[T](val name: String, val capacity: Option[Int] = None) e
 class SourceEmitter[T](val name: String) extends CachedEmitter[T]
 
 class Model {
-  var emitters: Map[String, Emitter[_]] = Map.empty
-  var receivers: Map[String, Receiver[_]] = Map.empty
+
+  def source[T](name: String): Emitter[T] = new SourceEmitter[T](name)
+
+  trait Builder[T] {
+    val source: Emitter[T]
+    protected def name(tag: String): String =
+      "%s.%s" format (source.name, tag)
+  }
+
+  class FactoryBuilder[T](val source: Emitter[T]) extends Builder[T] {
+    def |->(): Emitter[T] = source
+  }
+
+  protected implicit def sourceToFactoryBuilder[T: Ordering](e: Emitter[T]): FactoryBuilder[T] = new FactoryBuilder[T](e)
+
+  class MaxBuilder[T: Ordering](val source: Emitter[T]) extends Builder[T] {
+    def max(size: Int) = new BufferedMax[T](name("max" + size), size)
+    def max = new Max[T](name("max"))
+  }
+
+  protected implicit def sourceToMaxBuilder[T: Ordering](e: Emitter[T]): MaxBuilder[T] = new MaxBuilder[T](e)
+
+}
+
+class Sensors extends Model {
+
+  val s1 = source[Int]("s1")
+  val s2 = source[Int]("s2")
+
 }
