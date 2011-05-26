@@ -26,16 +26,16 @@ class VariableSpec extends Spec with ShouldMatchers {
 
     describe("when received a datum") {
 
-      val emitter = new SourceEmitter[Int]("e")
-      val variable = new Variable[Int]("x")
-      val recorder = new RecordingReceiver[Int]("r")
+      val emitter = new SourceEmitter[Int]("emitter")
+      val variable = new Variable[Int]("var")
+      val rec = new RecordingReceiver[Int]("rec")
 
-      emitter --> variable --> recorder
+      emitter --> variable --> rec
 
       emitter.emit(Datum(1, i))
 
       it("should emit the same datum") {
-        recorder.recorded.head should equal(Datum(1, i))
+        rec.data.head should equal(Datum(1, i))
       }
 
       it("should return the same datum as last emitted") {

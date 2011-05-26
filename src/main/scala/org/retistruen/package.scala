@@ -39,6 +39,15 @@ trait Emitter[T] extends Named {
   def emit(datum: Datum[T]): Unit =
     receivers.foreach(_.receive(this, datum))
 
+  def emit(some: T): Unit =
+    emit(Datum(some, new Instant))
+
+  def <<(datum: Datum[T]) = emit(datum)
+
+  def <<(some: T) = emit(some)
+
+  def <<<(some: T*) = some foreach emit
+
 }
 
 /**
@@ -109,14 +118,19 @@ class BufferedMax[N: Ordering](val name: String, val size: Int) extends Buffered
 
 }
 
-class RecordingReceiver[T](val name: String) extends Receiver[T] {
+class RecordingReceiver[T](val name: String, val capacity: Option[Int] = None) extends Receiver[T] {
 
-  private var data: Seq[Datum[T]] = Seq.empty
+  private var buffer: Seq[Datum[T]] = Seq.empty
 
-  def recorded = data
+  def data = buffer
 
-  def receive(emitter: Emitter[T], datum: Datum[T]) =
-    data = data :+ datum
+  def receive(emitter: Emitter[T], datum: Datum[T]) = {
+    buffer = buffer :+ datum
+    for (c ← capacity) buffer = buffer.drop(buffer.size - c)
+  }
+
+  def clear =
+    buffer = Seq.empty
 
 }
 

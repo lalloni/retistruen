@@ -10,36 +10,36 @@ import org.joda.time.Instant
 
 class BufferedMaxSpec extends Spec with ShouldMatchers {
 
-  val i = new Instant
+  def newFixture = {
+    val emt = new SourceEmitter[Int]("emitter")
+    val max = new BufferedMax[Int]("max3", 3)
+    val rec = new RecordingReceiver[Int]("rec")
+    emt --> max --> rec
+    (emt, max, rec)
+  }
 
   describe("A BufferedMax") {
 
-    describe("when just created") {
-
-      val emitter = new SourceEmitter[Int]("source")
-
-      val max = new BufferedMax[Int]("max", 3)
-
-      val recorder = new RecordingReceiver[Int]("rec")
-
-      emitter --> max --> recorder
-
-      describe("when received 3, 5, 1 datums") {
-
-        emitter emit Datum(3, i)
-        emitter emit Datum(5, i)
-        emitter emit Datum(1, i)
-
-        it("should emit 5") {
-          recorder.recorded.last.value should equal(5)
-        }
-
-        it("should have emitted 3, 5, 5") {
-          recorder.recorded.map(_.value) should equal(Seq(3, 5, 5))
-        }
-
+    describe("when received 3, 5, 1 datums") {
+      val (emt, max, rec) = newFixture
+      emt <<< (3, 5, 1)
+      it("should emit 5") {
+        rec.data.last.value should equal(5)
       }
+      it("should have emitted 3, 5, 5") {
+        rec.data.map(_.value) should equal(Seq(3, 5, 5))
+      }
+    }
 
+    describe("when received 10, 5, 3, 1") {
+      val (emt, max, rec) = newFixture
+      emt <<< (10, 5, 3, 1)
+      it("should have emitted 5 as last max") {
+        rec.data.last.value should equal(5)
+      }
+      it("should have emitted 10, 10, 10, 5") {
+        rec.data.map(_.value) should equal(Seq(10, 10, 10, 5))
+      }
     }
 
   }
