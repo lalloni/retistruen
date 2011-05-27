@@ -6,20 +6,31 @@ import org.joda.time.ReadableInstant
 import scala.collection.immutable.Queue
 import scala.actors.Actor
 
-case class Datum[T](value: T, created: ReadableInstant = new Instant) {
-  def fresh = Datum(value)
+case class Tag[@specialized T](name: String, value: T) {
+  override def toString = "#[%s:%s]" format (name, value)
+}
+
+case class Tagging(tags: Set[Tag[_]]) {
+  val tagsByName = tags.groupBy(_.name)
+  validateUniqueness(tagsByName)
+  private def validateUniqueness(index: Map[String, Set[Tag[_]]]) = {
+    val repeated = index.values.filter(_.size > 1)
+    if (!repeated.isEmpty)
+      throw sys.error("Duplicate tags {" + repeated.mkString(", ") + "}")
+  }
+}
+
+case class Datum[@specialized T](value: T, created: ReadableInstant = new Instant, tagging: Option[Tagging] = None) {
+  def this(value: T, tagging: Option[Tagging]) = this(value, new Instant, tagging)
+  def refresh = new Datum(value, new Instant, tagging)
 }
 
 trait Named {
-
   val name: String
-
 }
 
 trait Receiver[T] extends Named {
-
   def receive(emitter: Emitter[T], datum: Datum[T])
-
 }
 
 trait Emitter[T] extends Named {
@@ -30,9 +41,7 @@ trait Emitter[T] extends Named {
     receivers = receivers + rec
 
   def >>>(others: Receiver[T]*): Unit = others.foreach(register(_))
-
   def >>(other: Receiver[T]): Unit = register(other)
-
   def >>(other: Receiver[T] with Emitter[T]): Emitter[T] = {
     register(other)
     other
@@ -40,25 +49,22 @@ trait Emitter[T] extends Named {
 
   def emit(datum: Datum[T]): Unit =
     receivers.foreach(_.receive(this, datum))
-
   def emit(some: T): Unit =
     emit(Datum(some, new Instant))
 
   def <<(datum: Datum[T]) = emit(datum)
-
   def <<(some: T) = emit(some)
-
   def <<<(some: T*) = some foreach emit
 
 }
 
-trait BufferedReceiver[T] extends Receiver[T] {
+trait SlidingReceiver[T] extends Receiver[T] {
 
   val size: Int
 
   private var data: Seq[Datum[T]] = Seq.empty
 
-  def buffer: Seq[Datum[T]] = data
+  def window: Seq[Datum[T]] = data
 
   def receive(emitter: Emitter[T], datum: Datum[T]) = {
     data = data :+ datum
@@ -67,7 +73,7 @@ trait BufferedReceiver[T] extends Receiver[T] {
 
 }
 
-trait CachedEmitter[T] extends Emitter[T] {
+trait CachingEmitter[T] extends Emitter[T] {
 
   private var cached: Option[Datum[T]] = None
 
@@ -80,23 +86,23 @@ trait CachedEmitter[T] extends Emitter[T] {
 
 }
 
-sealed trait Functor[T, R] extends Receiver[T] with Emitter[R]
+sealed trait Functor[T, R] extends Receiver[T] with CachingEmitter[R]
 
-trait UnbufferedFunctor[T, R] extends Functor[T, R] with CachedEmitter[R] {
+trait SimpleFunctor[T, R] extends Functor[T, R] {
 
-  protected def result(datum: Datum[T]): Datum[R]
+  protected def operate(datum: Datum[T]): Datum[R]
 
-  def receive(emitter: Emitter[T], datum: Datum[T]) = emit(result(datum))
+  def receive(emitter: Emitter[T], datum: Datum[T]) = emit(operate(datum))
 
 }
 
-trait BufferedFunctor[T, R] extends Functor[T, R] with CachedEmitter[R] with BufferedReceiver[T] {
+trait SequenceFunctor[T, R] extends Functor[T, R] with SlidingReceiver[T] {
 
-  protected def result(data: Seq[Datum[T]]): Datum[R]
+  protected def operate(data: Seq[Datum[T]]): Datum[R]
 
   override def receive(emitter: Emitter[T], datum: Datum[T]) = {
     super.receive(emitter, datum)
-    emit(result(buffer))
+    emit(operate(window))
   }
 
 }

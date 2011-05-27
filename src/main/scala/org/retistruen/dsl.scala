@@ -10,11 +10,11 @@ class Model {
 
   def source[T](name: String): E[T] = new SourceEmitter[T](name)
 
-  def rec[T, R]: ER[T] = { e ⇒ new RecorderReceiver[T](name(e, "rec")) }
+  def rec[T, R]: ER[T] = { e ⇒ new RecordingReceiver[T](name(e, "rec")) }
 
-  def max[T: Ordering]: ERE[T] = { e ⇒ new Max[T](name(e, "max")) }
+  def max[T: Ordering]: ERE[T] = { e ⇒ new AbsoluteMax[T](name(e, "max")) }
 
-  def max[T: Ordering](size: Int): ERE[T] = { e ⇒ new BufferedMax[T](name(e, "max" + size), size) }
+  def max[T: Ordering](size: Int): ERE[T] = { e ⇒ new SlidingMax[T](name(e, "max" + size), size) }
 
   private def name(previous: E[_], tag: String) = previous.name + "." + tag
 
@@ -32,8 +32,8 @@ object Sensors extends Model {
   val s1 = source[BigDecimal]("s1")
   val s2 = source[BigDecimal]("s2")
 
-  s1 --> max --> rec
+  s1 --> max
 
-  s1 --> mean --> max(10) --> rec
+  s1 --> max(10)
 
 }

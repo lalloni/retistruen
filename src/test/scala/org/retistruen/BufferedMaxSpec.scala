@@ -12,7 +12,7 @@ class BufferedMaxSpec extends Spec with ShouldMatchers {
 
   def newFixture = {
     val emt = new SourceEmitter[Int]("emitter")
-    val max = new BufferedMax[Int]("max3", 3)
+    val max = new SlidingMax[Int]("max3", 3)
     val rec = new RecordingReceiver[Int]("rec")
     emt >> max >> rec
     (emt, max, rec)
