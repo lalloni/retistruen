@@ -27,6 +27,7 @@ case class Datum[@specialized T](value: T, created: ReadableInstant = new Instan
 
 trait Named {
   val name: String
+  override def toString = "%s[%s]" format (getClass.getSimpleName, name)
 }
 
 trait Receiver[T] extends Named {
@@ -37,7 +38,8 @@ trait Emitter[T] extends Named {
 
   private var receivers: Set[Receiver[T]] = Set.empty
 
-  private def register(rec: Receiver[T]): Unit =
+  def registered: Set[Receiver[T]] = receivers
+  def register(rec: Receiver[T]): Unit =
     receivers = receivers + rec
 
   def >>>(others: Receiver[T]*): Unit = others.foreach(register(_))

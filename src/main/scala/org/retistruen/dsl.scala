@@ -1,39 +1,73 @@
 package org.retistruen
 
-class Model {
+import edu.uci.ics.jung.graph.DirectedSparseMultigraph
+import edu.uci.ics.jung.graph.DirectedSparseGraph
+import edu.uci.ics.jung.graph.Graph
+import edu.uci.ics.jung.graph.util.EdgeType._
 
-  type E[T] = Emitter[T]
-  type R[T] = Receiver[T]
-  type RE[T] = Receiver[T] with Emitter[T]
-  type ER[T] = E[T] ⇒ R[T]
-  type ERE[T] = E[T] ⇒ RE[T]
+class Model(val name: String) extends Named {
 
-  def source[T](name: String): E[T] = new SourceEmitter[T](name)
+  private var comps: Set[Named] = Set.empty
 
-  def rec[T, R]: ER[T] = { e ⇒ new RecordingReceiver[T](name(e, "rec")) }
+  def components: Set[Named] = comps
 
-  def max[T: Ordering]: ERE[T] = { e ⇒ new AbsoluteMax[T](name(e, "max")) }
+  def component(name: String) = comps.find(_.name == name)
 
-  def max[T: Ordering](size: Int): ERE[T] = { e ⇒ new SlidingMax[T](name(e, "max" + size), size) }
+  override def toString = super.toString + "{" + graph.toString + "}"
 
-  private def name(previous: E[_], tag: String) = previous.name + "." + tag
-
-  implicit def emitterConnector[T](emitter: E[T]) = new Connector[T](emitter)
-
-  class Connector[T](emitter: E[T]) {
-    def -->(builder: ERE[T]): E[T] = emitter >> builder(emitter)
-    def --|(builder: ERE[T]): E[T] = emitter >> builder(emitter)
+  lazy val graph = {
+    var edge = 0
+    val graph = new DirectedSparseMultigraph[Named, Int]
+    for (named ← components) {
+      graph.addVertex(named)
+      named match {
+        case emitter: Emitter[_] ⇒
+          for (receiver ← emitter.registered) {
+            if (!graph.containsVertex(receiver)) graph.addVertex(receiver)
+            edge = edge + 1
+            graph.addEdge(edge, named, receiver, DIRECTED)
+          }
+        case other ⇒
+          if (!graph.containsVertex(other)) graph.addVertex(other)
+      }
+    }
+    graph
   }
 
-}
+  def source[T](name: String) =
+    keep(new SourceEmitter[T](name))
 
-object Sensors extends Model {
+  def rec[T] = { e: Emitter[T] ⇒
+    keep(new RecordingReceiver[T](name(e, "rec")))
+  }
 
-  val s1 = source[BigDecimal]("s1")
-  val s2 = source[BigDecimal]("s2")
+  def rec[T](size: Int) = { e: Emitter[T] ⇒
+    keep(new RecordingReceiver[T](name(e, "rec"), Some(size)))
+  }
 
-  s1 --> max
+  def max[T: Ordering] = { e: Emitter[T] ⇒
+    keep(new AbsoluteMax[T](name(e, "max")))
+  }
 
-  s1 --> max(10)
+  def max[T: Ordering](size: Int) = { e: Emitter[T] ⇒
+    keep(new SlidingMax[T](name(e, "max" + size), size))
+  }
+
+  private def keep[N <: Named](named: N): N = {
+    comps = comps + named
+    named
+  }
+
+  private def name(previous: Emitter[_], name: String) = "%s.%s" format (previous.name, name)
+
+  implicit def emitterConnector[T](emitter: Emitter[T]) = new Connector[T](emitter)
+
+  class Connector[T](emitter: Emitter[T]) {
+    def -->[Q <: Receiver[T]](builder: Emitter[T] ⇒ Q): Q = {
+      val target = builder(emitter)
+      emitter >> target
+      target
+    }
+  }
 
 }
