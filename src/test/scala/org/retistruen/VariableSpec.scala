@@ -30,7 +30,7 @@ class VariableSpec extends Spec with ShouldMatchers {
       val variable = new Variable[Int]("var")
       val rec = new RecordingReceiver[Int]("rec")
 
-      emitter --> variable --> rec
+      emitter >> variable >> rec
 
       emitter.emit(Datum(1, i))
 
