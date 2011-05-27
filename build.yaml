@@ -1,2 +1,3 @@
 scala.version: 2.9.0
 scala.test: 1.4.1
+scala.check: 1.9
