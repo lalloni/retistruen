@@ -5,7 +5,7 @@
 package org.retistruen
 
 import instrument.SourceEmitter
-import org.retistruen.instrument.{RecordingReceiver, SlidingMax}
+import org.retistruen.instrument.{ RecordingReceiver, SlidingMax }
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.Spec
 
