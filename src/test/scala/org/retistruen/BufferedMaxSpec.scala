@@ -4,9 +4,10 @@
  */
 package org.retistruen
 
+import instrument.SourceEmitter
+import org.retistruen.instrument.{RecordingReceiver, SlidingMax}
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.Spec
-import org.joda.time.Instant
 
 class BufferedMaxSpec extends Spec with ShouldMatchers {
 

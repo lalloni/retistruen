@@ -7,9 +7,8 @@ package org.retistruen
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 
-/**
- * @author Pablo Lalloni <plalloni@gmail.com>
- * @since 27/05/2011 17:13:27
+/** @author Pablo Lalloni <plalloni@gmail.com>
+ *  @since 27/05/2011 17:13:27
  */
 class DSLSuite extends FunSuite with ShouldMatchers {
 
@@ -34,10 +33,11 @@ class DSLSuite extends FunSuite with ShouldMatchers {
 
     }
 
-    1 to 1000 foreach { i ⇒ model.s1 << math.random }
-    1 to 2000 foreach { i ⇒ model.s2 << math.random }
+    1 to 1000 foreach { _ ⇒ model.s1 << math.random }
+    1 to 2000 foreach { _ ⇒ model.s2 << math.random }
 
-    new ModelViewer(model).view
+    model.s1 << 10
+    model.s2 << 5
 
   }
 

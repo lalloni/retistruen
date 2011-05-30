@@ -4,11 +4,12 @@
  */
 package org.retistruen
 
+import instrument.{ SourceEmitter, Identity, RecordingReceiver }
+import org.joda.time.Instant
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.Spec
-import org.joda.time.Instant
 
-class VariableSpec extends Spec with ShouldMatchers {
+class IdentitySpec extends Spec with ShouldMatchers {
 
   val i = new Instant
 
@@ -16,10 +17,10 @@ class VariableSpec extends Spec with ShouldMatchers {
 
     describe("when just created") {
 
-      val variable = new Variable[Int]("x")
+      val identity = new Identity[Int]("x")
 
       it("should have no cached result") {
-        variable.last should equal(None)
+        identity.last should equal(None)
       }
 
     }
@@ -27,19 +28,19 @@ class VariableSpec extends Spec with ShouldMatchers {
     describe("when received a datum") {
 
       val emitter = new SourceEmitter[Int]("emitter")
-      val variable = new Variable[Int]("var")
+      val identity = new Identity[Int]("var")
       val rec = new RecordingReceiver[Int]("rec")
 
-      emitter >> variable >> rec
+      emitter >> identity >> rec
 
       emitter.emit(Datum(1, i))
 
       it("should emit the same datum") {
-        rec.data.head should equal(Datum(1, i))
+        rec.data.head.value should equal(1)
       }
 
       it("should return the same datum as last emitted") {
-        variable.last should equal(Some(Datum(1, i)))
+        identity.last.map(_.value) should equal(Some(1))
       }
 
     }
