@@ -33,7 +33,7 @@ class IdentitySpec extends Spec with ShouldMatchers {
 
       emitter >> identity >> rec
 
-      emitter.emit(Datum(1, i))
+      emitter << Datum(1, i)
 
       it("should emit the same datum") {
         rec.data.head.value should equal(1)

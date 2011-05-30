@@ -3,7 +3,8 @@ package org.retistruen
 import org.joda.time.ReadableInstant
 import org.joda.time.Instant
 
-/** A Tag is a named value that can be applied through [[org.retistruen.Tagging]]
+/**
+ * A Tag is a named value that can be applied through [[org.retistruen.Tagging]]
  *  to objects to be used as data for drilling down into a set for analysis purposes.
  *  @tparam T the type of the optional [[org.retistruen.Tag]] value
  */
@@ -24,7 +25,8 @@ case class Tagging(tags: Set[Tag[_]]) {
 
 }
 
-/** Represents a value with its creation time and an optional [[org.retistruen.Tagging]]
+/**
+ * Represents a value with its creation time and an optional [[org.retistruen.Tagging]]
  *  @tparam T The type of the value represented by this [[org.retistruen.Datum]]
  */
 case class Datum[@specialized T](value: T, created: ReadableInstant = new Instant, tagging: Option[Tagging] = None) {
@@ -32,6 +34,9 @@ case class Datum[@specialized T](value: T, created: ReadableInstant = new Instan
   def this(value: T, tagging: Option[Tagging]) = this(value, new Instant, tagging)
 
   /** Returns a new copy of this [[org.retistruen.Datum]] with a new timestamp */
-  def refresh = new Datum(value, new Instant, tagging)
+  def fresh = new Datum(value, new Instant, tagging)
+
+  /** Returns a new copy of this [[org.retistruen.Datum]] with a new timestamp and value (keeps tagging) */
+  def freshWith[R](value: R) = new Datum[R](value, new Instant, tagging)
 
 }
