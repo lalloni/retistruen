@@ -7,7 +7,8 @@ package org.retistruen
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 
-/** @author Pablo Lalloni <plalloni@gmail.com>
+/**
+ * @author Pablo Lalloni <plalloni@gmail.com>
  *  @since 27/05/2011 17:13:27
  */
 class DSLSuite extends FunSuite with ShouldMatchers {
@@ -19,13 +20,15 @@ class DSLSuite extends FunSuite with ShouldMatchers {
       val s1 = source[Double]("s1")
 
       s1 --> max --> rec(10)
+      s1 --> mean --> rec(10)
 
       val max10 = s1 --> max(10)
 
       max10 --> rec(100)
       max10 --> rec(50)
 
-      s1 --> max(50) --> rec(10)
+      s1 --> mean(50) --> rec
+      s1 --> mean(200) --> rec
 
       val s2 = source[Double]("s2")
 
