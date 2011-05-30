@@ -11,9 +11,9 @@ import org.scalatest.FunSuite
  * @author Pablo Lalloni <plalloni@gmail.com>
  *  @since 27/05/2011 17:13:27
  */
-class DSLSuite extends FunSuite with ShouldMatchers {
+class BuildingSuite extends FunSuite with ShouldMatchers {
 
-  test("Build a model") {
+  test("Build a complex model") {
 
     val model = new Model("test") {
 

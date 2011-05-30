@@ -13,7 +13,7 @@ class IdentitySpec extends Spec with ShouldMatchers {
 
   val i = new Instant
 
-  describe("A Variable") {
+  describe("An Identity functor") {
 
     describe("when just created") {
 

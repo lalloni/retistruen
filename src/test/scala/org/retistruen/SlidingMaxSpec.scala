@@ -9,7 +9,7 @@ import org.retistruen.instrument.{ RecordingReceiver, SlidingMax }
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.Spec
 
-class BufferedMaxSpec extends Spec with ShouldMatchers {
+class SlidingMaxSpec extends Spec with ShouldMatchers {
 
   def newFixture = {
     val emt = new SourceEmitter[Int]("emitter")
@@ -19,7 +19,7 @@ class BufferedMaxSpec extends Spec with ShouldMatchers {
     (emt, max, rec)
   }
 
-  describe("A BufferedMax") {
+  describe("A SlidingMax") {
 
     describe("when received 3, 5, 1 datums") {
       val (emt, max, rec) = newFixture
