@@ -17,5 +17,5 @@ Buildr::TestFramework << Buildr::Scala::CustomScalaTest
 Release.next_version = lambda do |version| 
   v = version.gsub(/-SNAPSHOT$/, "").split(/\./)
   v[-1] = v[-1].to_i + 1
-  v.join(".") 
+  v.join(".") + "-SNAPSHOT" 
 end  
