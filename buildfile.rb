@@ -12,27 +12,31 @@ SCALATEST = transitive("org.scalatest:scalatest_#{Scala.version}:jar:1.4.1")
 
 # Repositories
 repositories.remote << "http://www.ibiblio.org/maven2/"
+repositories.release_to[:url] = "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external-snapshots"
 
 # Project Meta
-VERSION_NUMBER = "0.1"
-GROUP = "org.retistruen"
-COPYRIGHT = "The retistruen Team"
+THIS_VERSION = "0.1-SNAPSHOT"
+THIS_GROUP = "org.retistruen"
 
 # Project
-desc "The retistruen Project"
+desc "The Retistruen Project"
 define "retistruen" do
 
-  project.version = VERSION_NUMBER
-  project.group = GROUP
-
-  manifest["Implementation-Vendor"] = COPYRIGHT
+  project.version = THIS_VERSION
+  project.group = THIS_GROUP
 
   resources
 
   compile.with JODA_TIME, JUNG, COLLECTIONS_GENERIC, COMMONS_MATH
   compile.using :debug => false
-
+  
   test.resources
   test.using :customscalatest
+  
+  doc.using :scaladoc
+  
+  package :jar
+  package :sources
+  package_as_scaladoc("target/doc")
 
 end

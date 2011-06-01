@@ -12,3 +12,10 @@ module Buildr::Scala
 end
 
 Buildr::TestFramework << Buildr::Scala::CustomScalaTest
+
+#Release.message = lambda { |version| "Tagged version #{version}" }
+Release.next_version = lambda do |version| 
+  v = version.gsub(/-SNAPSHOT$/, "").split(/\./)
+  v[-1] = v[-1].to_i + 1
+  v.join(".") 
+end  
