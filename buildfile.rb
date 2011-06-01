@@ -4,7 +4,7 @@ require 'buildcustomizations'
 # Project Meta
 THIS_GROUP = "org.retistruen"
 THIS_ARTIFACT = "retistruen"
-THIS_VERSION = "0.1"
+THIS_VERSION = "0.2"
 
 # Compile Dependencies
 JODA_TIME = "joda-time:joda-time:jar:1.6.2"
