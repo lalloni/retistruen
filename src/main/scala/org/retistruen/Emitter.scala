@@ -2,8 +2,7 @@ package org.retistruen
 
 import org.joda.time.Instant
 
-/**
- * Emits values as instances of $Datum to the set of registered $Receiver
+/** Emits values as instances of $Datum to the set of registered $Receiver
  *  @tparam T the type of the emitted values
  *  @define Receiver [[org.retistruen.Receiver]]
  *  @define Emitter [[org.retistruen.Emitter]]
@@ -29,8 +28,7 @@ trait Emitter[T] extends Named {
   /** $Registers */
   def >>>(others: Receiver[T]*): Unit = others foreach register
 
-  /**
-   * $Registers Also returns the {{$Receiver with Emitter}} as Emitter to
+  /** $Registers Also returns the {{$Receiver with Emitter}} as Emitter to
    *  support a fluent registration idiom like:
    *  {{{
    *  emitter1 >> emitterreceiver1 >> emitterreceiver2 >> receiver
@@ -56,8 +54,11 @@ trait CachingEmitter[T] extends Emitter[T] {
 
   private var cached: Option[Datum[T]] = None
 
-  /** Returns the last $Datum emitted by this $Emitter */
+  /** Returns the last $Datum emitted by this $Emitter or None if none emitted yet */
   def last: Option[Datum[T]] = cached
+
+  /** Returns the value contained in the last $Datum emitted by this $Emitter or None if none emitted yet */
+  def lastValue: Option[T] = last.map(_.value)
 
   override protected def emit(datum: Datum[T]) = {
     cached = Some(datum)

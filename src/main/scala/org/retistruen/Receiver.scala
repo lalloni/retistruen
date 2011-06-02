@@ -18,6 +18,8 @@ trait SlidingWindowReceiver[T] extends Receiver[T] {
 
   def window: Seq[Datum[T]] = data
 
+  def windowValues: Seq[T] = window.map(_.value)
+
   def receive(emitter: Emitter[T], datum: Datum[T]) = {
     data = data :+ datum
     data = data.drop(data.size - size)
