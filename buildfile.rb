@@ -1,6 +1,10 @@
 require 'buildr/scala'
 require 'buildcustomizations'
 
+# Repositories
+repositories.remote << "http://www.ibiblio.org/maven2/"
+repositories.release_to[:url] = "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external"
+
 # Project Meta
 THIS_GROUP = "org.retistruen"
 THIS_ARTIFACT = "retistruen"
@@ -12,9 +16,8 @@ JUNG = group("jung-api", "jung-graph-impl", "jung-algorithms", "jung-visualizati
 COLLECTIONS_GENERIC = "net.sourceforge.collections:collections-generic:jar:4.01"
 COMMONS_MATH = "org.apache.commons:commons-math:jar:2.2"
 
-# Repositories
-repositories.remote << "http://www.ibiblio.org/maven2/"
-repositories.release_to[:url] = "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external"
+# Test Dependencies
+MOCKITO = transitive("org.mockito:mockito-all:jar:1.8.1")
 
 # Project
 desc "The Retistruen Project"
@@ -27,12 +30,13 @@ define THIS_ARTIFACT do
 
   compile.with JODA_TIME, JUNG, COLLECTIONS_GENERIC, COMMONS_MATH
   compile.using :debug => false
-  
+
   test.resources
   test.using :customscalatest
-  
+  test.with MOCKITO
+
   doc.using :scaladoc
-  
+
   package :jar
   package :sources
   package_as_scaladoc("target/doc")

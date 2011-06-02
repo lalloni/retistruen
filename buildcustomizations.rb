@@ -5,7 +5,7 @@ module Buildr::Scala
     VERSION = "1.4.1"
     class << self
       def dependencies
-        ["org.scalatest:scalatest_#{Scala.version}:jar:#{version}"] + Check.dependencies + JMock.dependencies + JUnit.dependencies
+        ["org.scalatest:scalatest_#{Scala.version}:jar:#{version}"] + Check.dependencies
       end
     end
   end
