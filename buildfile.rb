@@ -8,7 +8,12 @@ THIS_VERSION = "0.2-SNAPSHOT"
 
 # Repositories
 repositories.remote << "http://www.ibiblio.org/maven2/"
-repositories.release_to[:url] = THIS_VERSION=~/-SNAPSHOT$/ ? "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external-snapshots" : "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external"
+repositories.release_to[:url] =
+  if THIS_VERSION =~ /-SNAPSHOT$/
+    "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external-snapshots"
+  else
+    "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external"
+  end
 
 # Compile Dependencies
 JODA_TIME = "joda-time:joda-time:jar:1.6.2"
