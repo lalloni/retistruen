@@ -59,15 +59,13 @@ class FrequencySurveySpec extends Spec with ShouldMatchers {
         lastValue should equal(10)
 
         val instants = emitted.map(_.created)
-        val diffs = (instants.dropRight(1) zip instants.drop(1))
-          .map(p ⇒ new Duration(p._1, p._2).getMillis)
+        val diffs = (instants.dropRight(1) zip instants.drop(1)) map (p ⇒ new Duration(p._1, p._2).getMillis.toInt)
 
-        diffs.foreach { d ⇒
-          d should (be < (1100l) and be > (900l))
-        }
-
+        diffs.foreach(_ should (be < (1100) and be > (900)))
       }
+
     }
+
   }
 
 }
