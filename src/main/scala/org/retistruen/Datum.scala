@@ -1,7 +1,6 @@
 package org.retistruen
 
-import org.joda.time.ReadableInstant
-import org.joda.time.Instant
+import org.joda.time.{ Instant, ReadableInstant }
 
 /**
  * A Tag is a named value that can be applied through [[org.retistruen.Tagging]]
@@ -18,18 +17,25 @@ case class Tag[@specialized T](name: String, value: Option[T] = None) extends Na
 /** Represents a tagging over an object */
 case class Tagging(tags: Set[Tag[_]]) {
 
-  /** Returns the {tags} grouped by name */
-  lazy val grouped: Map[String, Set[Tag[_]]] = tags.groupBy(_.name)
+  /** Returns the values grouped by name */
+  lazy val grouped: Map[String, Set[Option[_]]] = tags.groupBy(_.name).mapValues(_.map(_.value))
+
+  def merge(other: Tagging) = Tagging(tags ++ other.tags)
 
   override def toString = tags.mkString("#{", ",", "}")
 
 }
 
+/** Something that has a [[org.retistruen.datum.Tagging]] */
+trait Tagged {
+  def tagging: Option[Tagging]
+}
+
 /**
  * Represents a value with its creation time and an optional [[org.retistruen.Tagging]]
- *  @tparam T The type of the value represented by this [[org.retistruen.Datum]]
+ * @tparam T The type of the value represented by this [[org.retistruen.Datum]]
  */
-case class Datum[@specialized T](value: T, created: ReadableInstant = new Instant, tagging: Option[Tagging] = None) {
+case class Datum[@specialized T](value: T, created: ReadableInstant = new Instant, tagging: Option[Tagging] = None) extends Tagged {
 
   def this(value: T, tagging: Option[Tagging]) = this(value, new Instant, tagging)
 
