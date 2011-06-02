@@ -1,6 +1,6 @@
-package org.retistruen
+package org.retistruen.view
 
-import view.ModelViewer
+import org.retistruen.Model
 
 object MyModel extends Model("My Model") {
 

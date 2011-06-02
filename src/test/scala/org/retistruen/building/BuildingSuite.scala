@@ -2,8 +2,9 @@
  * Author: Pablo Lalloni <plalloni@gmail.com>
  * Created: 27/05/2011 17:13:27
  */
-package org.retistruen
+package org.retistruen.building
 
+import org.retistruen.Model
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
 

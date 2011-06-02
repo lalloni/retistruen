@@ -2,10 +2,8 @@
  * Author: Pablo Lalloni <plalloni@gmail.com>
  * Created: 24/05/2011 13:48:43
  */
-package org.retistruen
+package org.retistruen.instrument
 
-import instrument.SourceEmitter
-import org.retistruen.instrument.{ RecordingReceiver, SlidingMax }
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.Spec
 

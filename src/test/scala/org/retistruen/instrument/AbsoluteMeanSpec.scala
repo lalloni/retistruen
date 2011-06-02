@@ -2,12 +2,10 @@
  * Author: Pablo Lalloni <plalloni@gmail.com>
  * Created: 30/05/2011 15:05:26
  */
-package org.retistruen
+package org.retistruen.instrument
 
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.Spec
-import org.retistruen.instrument.AbsoluteMean
-import org.retistruen.instrument.SourceEmitter
 
 /**
  * @author Pablo Lalloni <plalloni@gmail.com>
