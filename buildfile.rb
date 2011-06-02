@@ -1,14 +1,14 @@
 require 'buildr/scala'
 require 'buildcustomizations'
 
-# Repositories
-repositories.remote << "http://www.ibiblio.org/maven2/"
-repositories.release_to[:url] = "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external"
-
 # Project Meta
 THIS_GROUP = "org.retistruen"
 THIS_ARTIFACT = "retistruen"
 THIS_VERSION = "0.2-SNAPSHOT"
+
+# Repositories
+repositories.remote << "http://www.ibiblio.org/maven2/"
+repositories.release_to[:url] = THIS_VERSION=~/-SNAPSHOT$/ ? "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external-snapshots" : "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external"
 
 # Compile Dependencies
 JODA_TIME = "joda-time:joda-time:jar:1.6.2"
