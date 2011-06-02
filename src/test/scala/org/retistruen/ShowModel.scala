@@ -4,7 +4,7 @@ import view.ModelViewer
 
 object MyModel extends Model("My Model") {
 
-  val s1 = source[Int]("s1")
+  val s1 = source[Double]("s1")
 
   s1 --> max --> rec(10)
   s1 --> max(50) --> rec(10)
@@ -16,7 +16,7 @@ object MyModel extends Model("My Model") {
   max10 --> rec(100)
   max10 --> rec(50)
 
-  val s2 = source[Int]("s2")
+  val s2 = source[Double]("s2")
 
   s2 --> max(10) --> rec(20)
   s2 --> rec(100)

@@ -6,33 +6,34 @@ package org.retistruen.instrument
 
 import org.retistruen.Datum
 import org.retistruen.SimpleFunctor
-import org.apache.commons.math.stat.descriptive.moment.Mean
 import org.joda.time.Instant
 import org.retistruen.SequenceFunctor
 
-class AbsoluteMean[@specialized N: Numeric](val name: String) extends SimpleFunctor[N, Double] {
+class AbsoluteMean[@specialized N: Fractional](val name: String) extends SimpleFunctor[N, N] {
 
-  val num = implicitly[Numeric[N]]
-  import num._
+  val F = implicitly[Fractional[N]]
 
-  val mean = new Mean
+  import F._
 
-  override protected def operate(datum: Datum[N]): Datum[Double] = {
-    mean.increment(datum.value.toDouble)
-    datum.freshWith(mean.getResult)
+  var mean: N = F.zero
+
+  var count: Int = 0
+
+  override protected def operate(datum: Datum[N]): Datum[N] = {
+    count = count + 1
+    mean = mean + (datum.value - mean) / F.fromInt(count)
+    Datum(mean)
   }
 
 }
 
-class SlidingMean[@specialized N: Numeric](val name: String, val size: Int) extends SequenceFunctor[N, Double] {
+class SlidingMean[@specialized N: Fractional](val name: String, val size: Int) extends SequenceFunctor[N, N] {
 
-  val num = implicitly[Numeric[N]]
-  import num._
+  val F = implicitly[Fractional[N]]
+  import F._
 
-  override protected def operate(datums: Seq[Datum[N]]): Datum[Double] = {
-    val mean = new Mean
-    for (datum ← datums) mean.increment(datum.value.toDouble)
-    Datum(mean.getResult)
+  override protected def operate(datums: Seq[Datum[N]]): Datum[N] = {
+    Datum(datums.map(_.value).sum / F.fromInt(datums.size))
   }
 
 }

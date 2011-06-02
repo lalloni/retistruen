@@ -30,10 +30,10 @@ trait Building extends Named {
   protected def max[T: Ordering](size: Int) =
     { e: Emitter[T] ⇒ keep(new SlidingMax[T](postfix(e, "max" + size), size)) }
 
-  protected def mean[T: Numeric] =
+  protected def mean[T: Fractional] =
     { e: Emitter[T] ⇒ keep(new AbsoluteMean[T](postfix(e, "mean"))) }
 
-  protected def mean[T: Numeric](size: Int) =
+  protected def mean[T: Fractional](size: Int) =
     { e: Emitter[T] ⇒ keep(new SlidingMean[T](postfix(e, "mean" + size), size)) }
 
   private def keep[N <: Named](named: N): N = {
