@@ -41,7 +41,7 @@ import org.retistruen.building.Building
  */
 class Model(val name: String) extends Building {
 
-  def components: Set[Named] = structure
+  def components: Seq[Named] = structure
 
   def component(name: String) = structure.find(_.name == name)
 

@@ -13,35 +13,35 @@ import org.retistruen.instrument.AbsoluteMean
 /** Contains DSL methods for building [[org.retistruen.Model]] */
 trait Building extends Named {
 
-  protected var structure: Set[Named] = Set.empty
+  protected var structure: Seq[Named] = Seq.empty
 
-  protected def source[T](name: String) =
-    keep(new SourceEmitter[T](postfix(this, name)))
-
-  protected def rec[T] =
-    { e: Emitter[T] ⇒ keep(new RecordingReceiver[T](postfix(e, "rec"))) }
-
-  protected def rec[T](size: Int) =
-    { e: Emitter[T] ⇒ keep(new RecordingReceiver[T](postfix(e, "rec" + size), Some(size))) }
-
-  protected def max[T: Ordering] =
-    { e: Emitter[T] ⇒ keep(new AbsoluteMax[T](postfix(e, "max"))) }
-
-  protected def max[T: Ordering](size: Int) =
-    { e: Emitter[T] ⇒ keep(new SlidingMax[T](postfix(e, "max" + size), size)) }
-
-  protected def mean[T: Fractional] =
-    { e: Emitter[T] ⇒ keep(new AbsoluteMean[T](postfix(e, "mean"))) }
-
-  protected def mean[T: Fractional](size: Int) =
-    { e: Emitter[T] ⇒ keep(new SlidingMean[T](postfix(e, "mean" + size), size)) }
-
-  private def keep[N <: Named](named: N): N = {
-    structure = structure + named
+  private def register[N <: Named](named: N): N = {
+    structure :+= named
+    registered(named)
     named
   }
 
-  private def postfix(previous: Named, name: String) =
+  protected def builder[E <: Emitter[_], R <: Receiver[_]](build: E ⇒ R): E ⇒ R =
+    { e: E ⇒ register(build(e)) }
+
+  protected def source[T](name: String) =
+    register(new SourceEmitter[T](suffix(this, name)))
+
+  protected def rec[T] = builder { e: Emitter[T] ⇒ new RecordingReceiver[T](suffix(e, "rec")) }
+
+  protected def rec[T](size: Int) = builder { e: Emitter[T] ⇒ new RecordingReceiver[T](suffix(e, "rec" + size), Some(size)) }
+
+  protected def max[T: Ordering] = builder { e: Emitter[T] ⇒ new AbsoluteMax[T](suffix(e, "max")) }
+
+  protected def max[T: Ordering](size: Int) = builder { e: Emitter[T] ⇒ new SlidingMax[T](suffix(e, "max" + size), size) }
+
+  protected def mean[T: Fractional] = builder { e: Emitter[T] ⇒ new AbsoluteMean[T](suffix(e, "mean")) }
+
+  protected def mean[T: Fractional](size: Int) = builder { e: Emitter[T] ⇒ new SlidingMean[T](suffix(e, "mean" + size), size) }
+
+  protected def registered[T <: Named](instrument: T) = {}
+
+  private def suffix(previous: Named, name: String) =
     "%s.%s" format (previous.name, name)
 
   protected implicit def connector[T](emitter: Emitter[T]) = new Connector[T](emitter)
