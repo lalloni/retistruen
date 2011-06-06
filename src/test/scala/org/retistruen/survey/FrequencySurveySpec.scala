@@ -1,13 +1,12 @@
 package org.retistruen.survey
 
 import org.joda.time.Seconds._
+import org.joda.time.Duration
 import org.retistruen.instrument.{ RecordingReceiver, SourceEmitter }
-import org.retistruen.{ Emitter, Datum, Receiver }
+import org.retistruen.{ Datum, Emitter, Receiver }
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.Spec
-import org.mockito.Mockito._
 import scala.collection.mutable.Buffer
-import org.joda.time.Duration
 
 class FrequencySurveySpec extends Spec with ShouldMatchers {
 
