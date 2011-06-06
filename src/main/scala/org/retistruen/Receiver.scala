@@ -1,6 +1,7 @@
 package org.retistruen
 
-/** Represents an object capable of receiving typed values from an [[org.retistruen.Emitter]].
+/**
+ * Represents an object capable of receiving typed values from an [[org.retistruen.Emitter]].
  *  @tparam T The type of the values this Receiver accepts.
  */
 trait Receiver[T] extends Named {

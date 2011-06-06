@@ -9,6 +9,9 @@ import org.retistruen.instrument.AbsoluteMax
 import org.retistruen.instrument.SlidingMax
 import org.retistruen.instrument.SlidingMean
 import org.retistruen.instrument.AbsoluteMean
+import org.retistruen.instrument.Logger
+import java.util.logging.Level
+import org.retistruen.Pollable
 
 /** Contains DSL methods for building [[org.retistruen.Model]] */
 trait Building extends Named {
@@ -24,10 +27,10 @@ trait Building extends Named {
   protected def builder[E <: Emitter[_], R <: Receiver[_]](build: E ⇒ R): E ⇒ R =
     { e: E ⇒ register(build(e)) }
 
-  protected def source[T](name: String) =
+  protected def source[T](name: String)(implicit m: Manifest[T]) =
     register(new SourceEmitter[T](suffix(this, name)))
 
-  protected def rec[T] = builder { e: Emitter[T] ⇒ new RecordingReceiver[T](suffix(e, "rec")) }
+  protected def rec[T](implicit m: Manifest[T]) = builder { e: Emitter[T] ⇒ new RecordingReceiver[T](suffix(e, "rec")) }
 
   protected def rec[T](size: Int) = builder { e: Emitter[T] ⇒ new RecordingReceiver[T](suffix(e, "rec" + size), Some(size)) }
 
@@ -38,6 +41,8 @@ trait Building extends Named {
   protected def mean[T: Fractional] = builder { e: Emitter[T] ⇒ new AbsoluteMean[T](suffix(e, "mean")) }
 
   protected def mean[T: Fractional](size: Int) = builder { e: Emitter[T] ⇒ new SlidingMean[T](suffix(e, "mean" + size), size) }
+
+  protected def log[T](level: Level) = builder { e: Emitter[T] ⇒ new Logger[T](suffix(e, "log"), level) }
 
   protected def registered[T <: Named](instrument: T) = {}
 

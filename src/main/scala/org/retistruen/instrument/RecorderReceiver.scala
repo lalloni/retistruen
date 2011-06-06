@@ -17,7 +17,7 @@ class RecordingReceiver[@specialized T](val name: String, val capacity: Option[I
 
   def dataValues = buffer.map(_.value)
 
-  def receive(emitter: Emitter[T], datum: Datum[T]) = {
+  override def receive(emitter: Emitter[T], datum: Datum[T]) = {
     buffer = buffer :+ datum
     for (c ← capacity) buffer = buffer.drop(buffer.size - c)
   }

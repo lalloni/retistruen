@@ -33,7 +33,7 @@ class SlidingMeanSpec extends Spec with ShouldMatchers {
         describe("after receiving " + current) {
           source << current
           val mean2 = (previous + current) / 2
-          val result = mean.lastValue
+          val result = mean.poll
           it("should have emited " + mean2) {
             result should equal(Some(mean2))
           }
