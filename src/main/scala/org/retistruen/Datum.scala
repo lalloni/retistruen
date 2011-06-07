@@ -46,3 +46,8 @@ case class Datum[@specialized T](value: T, created: ReadableInstant = new Instan
   def freshWith[R](value: R) = new Datum[R](value, new Instant, tagging)
 
 }
+
+object Datum {
+  def apply[T](value: T) = new Datum(value, None)
+  def apply[T](value: T, tagging: Option[Tagging]) = new Datum(value, tagging)
+}
