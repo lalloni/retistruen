@@ -36,7 +36,7 @@ class TickTimer(target: Actor, period: ReadablePeriod) extends Actor {
 
 case class Beat() extends Chronometric
 
-class FrequencySurvey(source: Source[Int], period: ReadablePeriod, tagging: Option[Tagging] = None) extends Actor {
+class FrequencySurvey(target: Source[Int], period: ReadablePeriod, tagging: Option[Tagging] = None) extends Actor {
 
   private val duration = period.toPeriod.toStandardDuration
 
@@ -48,7 +48,7 @@ class FrequencySurvey(source: Source[Int], period: ReadablePeriod, tagging: Opti
     react {
       case tick: Tick ⇒
         beats = beats.filter(_.instant isAfter tick.instant.minus(duration))
-        source << Datum(beats.count(_.instant isBefore tick.instant), tick.instant, tagging)
+        target << Datum(beats.count(_.instant isBefore tick.instant), tick.instant, tagging)
       case beat: Beat ⇒
         beats :+= beat
     }
