@@ -5,7 +5,6 @@ trait Named {
 
   val name: String
 
-  override def toString =
-    "%s[%s]" format (getClass.getSimpleName, name)
+  override def toString = name
 
 }
