@@ -27,37 +27,36 @@ trait JMX extends Named {
 
   object MBean extends DynamicMBean {
 
-    def attributes: Array[MBeanAttributeInfo] = pollables.toArray.map(pollable ⇒ new MBeanAttributeInfo(strip(pollable), classOf[java.lang.Double].getName, null, true, false, false))
+    def attributes: Array[MBeanAttributeInfo] =
+      pollables.toArray.map(pollable ⇒ new MBeanAttributeInfo(pollable.name, classOf[java.lang.Double].getName, null, true, false, false))
 
-    def getMBeanInfo: MBeanInfo = new MBeanInfo(getClass.getName, name, attributes, null, null, null)
+    def getMBeanInfo: MBeanInfo =
+      new MBeanInfo(getClass.getName, name, attributes, null, null, null)
 
-    def invoke(method: String, arguments: Array[AnyRef], signature: Array[String]): AnyRef = null
+    def invoke(method: String, arguments: Array[AnyRef], signature: Array[String]): AnyRef =
+      null
 
-    def getAttribute(name: String): Attribute = attribute(pollables.find(pollable ⇒ strip(pollable) == name).get)
+    def getAttribute(name: String): Attribute =
+      attribute(pollables.find(pollable ⇒ pollable.name == name).get)
 
-    def setAttribute(attribute: Attribute): Unit = {}
+    def setAttribute(attribute: Attribute): Unit =
+      Unit
 
-    def getAttributes(names: Array[String]): AttributeList = new AttributeList(names.map(getAttribute(_)).toList)
+    def getAttributes(names: Array[String]): AttributeList =
+      new AttributeList(names.map(getAttribute(_)).toList)
 
-    def setAttributes(attributes: AttributeList): AttributeList = null
+    def setAttributes(attributes: AttributeList): AttributeList =
+      null
 
-    private def attribute(pollable: Pollable[_]) = new Attribute(strip(pollable), value(pollable))
-
-    private def strip(named: Named) = named.name.drop(name.size + 1)
-
-    private def value(pollable: Pollable[_]) =
-      pollable.poll.get match {
-        case n: ScalaNumericConversions ⇒ n.doubleValue
-        case n: Number                  ⇒ n.doubleValue
-        case other                      ⇒ other
-      }
+    private def attribute(pollable: Pollable[_]) =
+      new Attribute(pollable.name, pollable.poll.getOrElse(null))
 
   }
 
   private def table(pairs: (String, String)*) = {
-    val t = new Hashtable[String, String]
-    for ((a, b) ← pairs) t.put(a, b)
-    t
+    val ht = new Hashtable[String, String]
+    for ((a, b) ← pairs) ht.put(a, b)
+    ht
   }
 
   def registerMBeans = {
