@@ -53,21 +53,31 @@ trait JMX extends Named {
 
   }
 
-  private def table(pairs: (String, String)*) = {
+  private def table(pairs: List[(String, String)]) = {
     val ht = new Hashtable[String, String]
-    for ((a, b) ← pairs) ht.put(a, b)
+    for ((a, b) ← pairs.reverse) ht.put(a, b)
     ht
   }
 
+  val jmxRegistrationDomain = "org.retistruen"
+
+  private def on(key: (String, String)*) =
+    ObjectName(jmxRegistrationDomain, table(("model" -> name) :: key.toList))
+
   def registerMBeans = {
     val server = bestMBeanServer("jboss")
-    server.registerMBean(
-      MBean,
-      ObjectName("retistruen", table("model" -> name, "type" -> "model")))
+    server.registerMBean(MBean,
+      on("type" -> "model", "name" -> name))
     for (source ← sources)
-      server.registerMBean(
-        new StandardMBean(new SourceObject(source), classOf[SourceMBean[_]]),
-        ObjectName("retistruen", table("model" -> name, "type" -> "source", "name" -> source.name)))
+      server.registerMBean(new StandardMBean(new SourceObject(source), classOf[SourceMBean[_]]),
+        on("type" -> "source", "name" -> source.name))
+  }
+
+  def unregisterMBeans = {
+    val server = bestMBeanServer("jboss")
+    server.unregisterMBean(on("type" -> "model", "name" -> name))
+    for (source ← sources)
+      server.unregisterMBean(on("type" -> "source", "name" -> source.name))
   }
 
 }
