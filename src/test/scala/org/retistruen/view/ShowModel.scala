@@ -1,9 +1,10 @@
 package org.retistruen.view
 
-import org.retistruen.Model
+import org.joda.time.Seconds._
 import org.joda.time.Minutes._
 import org.retistruen.jmx.JMX
-import org.joda.time.Seconds
+import org.retistruen._
+import org.retistruen.instrument.reduce.Max
 
 object MyModel extends Model("mymodel") with JMX {
 
@@ -15,14 +16,15 @@ object MyModel extends Model("mymodel") with JMX {
   s1 --> mean(50) --> rec
   s1 --> mean(200) --> rec
 
-  val min1 = s1 --> collect(Seconds.seconds(15))
+  val min1 = s1 --> collect(seconds(15))
 
-  min1 --> reduce(r.max) --> rec
-  min1 --> reduce(r.min) --> rec
-  min1 --> reduce(r.mean) --> rec
-  min1 --> reduce(r.stddev) --> rec
+  min1 --> reduce.max --> rec
+  min1 --> reduce.min --> rec
+  min1 --> reduce.mean --> rec
+  min1 --> reduce.stddev --> rec
+  min1 --> reduce("parity", { seq: Seq[Double] ⇒ seq.map(d ⇒ 1 - (d % 2)).sum }) // cálculo de "paridad" del bloque
 
-  s1 --> collect(minutes(5)) --> reduce(r.mean)
+  s1 --> collect(minutes(5)) --> reduce.mean
 
   val s2 = source[Double]("s2")
 

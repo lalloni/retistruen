@@ -8,18 +8,22 @@ trait ReducerBuilding {
 
   this: Building ⇒
 
-  protected def reduce[T, R](function: ReduceFunction[T, R]) = register { e: Emitter[Seq[Datum[T]]] ⇒ new Reducer[T, R](receiverName(e, "reduce", function), function) }
+  protected def reduce[T, R](name: String, function: Seq[T] ⇒ R) =
+    register { e: Emitter[Seq[Datum[T]]] ⇒ new Reducer[T, R](receiverName(e, "reduce", name), { seq: Seq[Datum[T]] ⇒ Datum(function(seq.map(_.value))) }) }
 
-  protected object r {
-    def sum[T: Numeric] = new Sum[T]
-    def product[T: Numeric] = new Product[T]
-    def max[T: Ordering] = new Max[T]
-    def min[T: Ordering] = new Min[T]
-    def mean[T: Fractional] = new Mean[T]
-    def variance[T: Fractional] = new Variance[T]
-    def stddev[T: Fractional] = new StandardDeviation[T]
-    def skewness[T: Fractional] = new Skewness[T]
-    def kurtosis[T: Fractional] = new Kurtosis[T]
+  protected def reduce[T, R] = new ReducerBuilding[T, R]
+
+  protected class ReducerBuilding[T, R] {
+    private def builder[T, R](function: ReduceFunction[T, R]) = { e: Emitter[Seq[Datum[T]]] ⇒ new Reducer[T, R](receiverName(e, "reduce", function), function) }
+    def sum[T: Numeric] = register(builder(new Sum[T]))
+    def product[T: Numeric] = register(builder(new Product[T]))
+    def max[T: Ordering] = register(builder(new Max[T]))
+    def min[T: Ordering] = register(builder(new Min[T]))
+    def mean[T: Fractional] = register(builder(new Mean[T]))
+    def variance[T: Fractional] = register(builder(new Variance[T]))
+    def stddev[T: Fractional] = register(builder(new StandardDeviation[T]))
+    def skewness[T: Fractional] = register(builder(new Skewness[T]))
+    def kurtosis[T: Fractional] = register(builder(new Kurtosis[T]))
   }
 
 }
