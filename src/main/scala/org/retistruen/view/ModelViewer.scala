@@ -6,15 +6,14 @@ package org.retistruen.view
 
 import edu.uci.ics.jung.algorithms.layout.ISOMLayout
 import edu.uci.ics.jung.graph.util.EdgeType
-import edu.uci.ics.jung.graph.{ Graph, DirectedSparseMultigraph }
-import edu.uci.ics.jung.visualization.control.{ ModalGraphMouse, DefaultModalGraphMouse }
+import edu.uci.ics.jung.graph.{ DirectedSparseMultigraph, Graph }
+import edu.uci.ics.jung.visualization.control.{ DefaultModalGraphMouse, ModalGraphMouse }
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller
-import edu.uci.ics.jung.visualization.{ VisualizationViewer, BasicVisualizationServer }
-import java.awt.{ Color, Paint, Dimension }
+import edu.uci.ics.jung.visualization.{ BasicVisualizationServer, VisualizationViewer }
+import java.awt.{ Color, Dimension, Paint }
 import javax.swing.JFrame
 import org.apache.commons.collections15.Transformer
-import org.retistruen.instrument.SourceEmitter
-import org.retistruen.{ Receiver, Emitter, Named, Model }
+import org.retistruen.{ Emitter, Model, Named, Receiver, Source }
 
 /** This is a simple visualizer of retistruen {org.retistruen.Model}.
  *
@@ -58,9 +57,9 @@ class ModelViewer(model: Model) {
     vv.getRenderContext.setVertexLabelTransformer(new ToStringLabeller);
     vv.getRenderContext.setVertexFillPaintTransformer(new Transformer[Named, Paint] {
       def transform(n: Named) = n match {
-        case s: SourceEmitter[_] ⇒ Color.GREEN
-        case e: Emitter[_]       ⇒ Color.ORANGE
-        case r: Receiver[_]      ⇒ Color.DARK_GRAY
+        case s: Source[_]   ⇒ Color.GREEN
+        case e: Emitter[_]  ⇒ Color.ORANGE
+        case r: Receiver[_] ⇒ Color.DARK_GRAY
       }
     })
 
