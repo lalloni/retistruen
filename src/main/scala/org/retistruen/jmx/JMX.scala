@@ -3,32 +3,32 @@ package org.retistruen.jmx
 import java.util.Hashtable
 import javax.management.ObjectName.{ getInstance ⇒ ObjectName }
 import javax.management.{ Attribute, AttributeList, DynamicMBean, MBeanAttributeInfo, MBeanInfo, StandardMBean }
+import org.retistruen.building.BuildingInfrastructure
 import org.retistruen.{ Named, Pollable, Source }
 import scala.collection.JavaConversions._
 import scala.math.ScalaNumericConversions
+import org.retistruen.OpenSource
 
 trait SourceMBean[T] {
-  protected val source: Source[T]
+  protected val source: OpenSource[T]
   def getName = source.name
-  def emit(value: T) = source << value
+  def emit(value: String) = source << value
 }
 
-class SourceObject[T](protected val source: Source[T]) extends SourceMBean[T]
+class SourceObject[T](protected val source: OpenSource[T]) extends SourceMBean[T]
 
 trait JMX extends Named {
 
-  protected var structure: Seq[Named]
+  this: BuildingInfrastructure ⇒
 
-  private def select[T](implicit m: Manifest[T]): Seq[T] = structure.filter(m.erasure.isInstance(_)).asInstanceOf[Seq[T]]
-
-  private def pollables = select[Pollable[_]]
-
-  private def sources = select[Source[_]]
+  private def select[T](implicit m: Manifest[T]): Seq[T] = components
+    .filter(m.erasure.isInstance(_))
+    .map(_.asInstanceOf[T])
 
   object MBean extends DynamicMBean {
 
     def attributes: Array[MBeanAttributeInfo] =
-      pollables.toArray.map(pollable ⇒ new MBeanAttributeInfo(pollable.name, classOf[java.lang.Double].getName, null, true, false, false))
+      select[Pollable[_]].toArray.map(pollable ⇒ new MBeanAttributeInfo(pollable.name, classOf[java.lang.Double].getName, null, true, false, false))
 
     def getMBeanInfo: MBeanInfo =
       new MBeanInfo(getClass.getName, name, attributes, null, null, null)
@@ -37,7 +37,7 @@ trait JMX extends Named {
       null
 
     def getAttribute(name: String): Attribute =
-      attribute(pollables.find(pollable ⇒ pollable.name == name).get)
+      attribute(select[Pollable[_]].find(pollable ⇒ pollable.name == name).get)
 
     def setAttribute(attribute: Attribute): Unit =
       Unit
@@ -68,7 +68,7 @@ trait JMX extends Named {
     val server = bestMBeanServer("jboss")
     server.registerMBean(MBean,
       on("type" -> "model", "name" -> name))
-    for (source ← sources)
+    for (source ← select[OpenSource[_]])
       server.registerMBean(new StandardMBean(new SourceObject(source), classOf[SourceMBean[_]]),
         on("type" -> "source", "name" -> source.name))
   }
@@ -76,7 +76,7 @@ trait JMX extends Named {
   def unregisterMBeans = {
     val server = bestMBeanServer("jboss")
     server.unregisterMBean(on("type" -> "model", "name" -> name))
-    for (source ← sources)
+    for (source ← select[OpenSource[_]])
       server.unregisterMBean(on("type" -> "source", "name" -> source.name))
   }
 
