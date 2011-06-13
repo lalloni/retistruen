@@ -32,6 +32,23 @@ object MyModel extends Model("mymodel") with JMX {
   s2 --> max(10) --> rec
   s2 --> mean --> rec
 
+  val s3 = osource[Double]("s3")
+
+  s3 --> collect(seconds(10)) --> reduce.mode --> rec(1000)
+
+  val s3c = s3 --> collect(seconds(15))
+
+  s3c --> reduce.open
+  s3c --> reduce.close
+  s3c --> reduce.max
+  s3c --> reduce.min
+  s3c --> reduce.median
+  s3c --> reduce.mean
+  s3c --> reduce.mode
+  s3c --> reduce.percentile(90)
+  s3c --> reduce.percentile(10)
+  s3c --> reduce.range
+
 }
 
 object ShowMyModel extends App {
@@ -46,6 +63,7 @@ object ShowMyModel extends App {
   (1 to 1000000) foreach { v ⇒
     MyModel.s1 << math.random * (math.random * v)
     Thread.sleep((math.random * 5).toInt)
+    MyModel.s3 << (math.random * 100).toInt
   }
 
 }

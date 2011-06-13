@@ -6,7 +6,7 @@ import java.util.logging.Level
 
 trait MiscBuilding {
 
-  this: Building ⇒
+  this: BuildingInfrastructure ⇒
 
   protected def rec[T] =
     register { e: Emitter[T] ⇒ new RecordingReceiver[T](receiverName(e, "rec")) }

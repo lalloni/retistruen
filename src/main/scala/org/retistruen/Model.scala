@@ -38,15 +38,10 @@ import org.retistruen.building._
  *
  *  @see [[org.retistruen.view.ModelViewer]]
  */
-class Model(val name: String)
-    extends Building
-    with InstrumentBuilding
-    with CollectorBuilding
-    with ReducerBuilding
-    with MiscBuilding {
-
-  def components: Seq[Named] = structure
-
-  def component(name: String) = structure.find(_.name == name)
-
-}
+class Model(val name: String) extends Named
+  with BuildingInfrastructure
+  with InstrumentBuilding
+  with CollectorBuilding
+  with ReducerBuilding
+  with OpenSourceBuilding
+  with MiscBuilding

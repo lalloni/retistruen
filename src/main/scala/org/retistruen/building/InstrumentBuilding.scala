@@ -5,7 +5,7 @@ import instrument._
 
 trait InstrumentBuilding {
 
-  this: Building ⇒
+  this: BuildingInfrastructure ⇒
 
   protected def max[T: Ordering] =
     register { e: Emitter[T] ⇒ new AbsoluteMax[T](receiverName(e, "max")) }

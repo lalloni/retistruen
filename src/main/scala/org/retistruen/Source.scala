@@ -1,13 +1,5 @@
-/*
- * Author: Pablo Lalloni <plalloni@gmail.com>
- * Created: 30/05/2011 17:19:32
- */
 package org.retistruen
 
-/**
- * @author Pablo Lalloni <plalloni@gmail.com>
- * @since 30/05/2011 17:19:32
- */
 trait Source[T] extends Emitter[T] {
 
   /** $Emits */
