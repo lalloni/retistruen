@@ -8,6 +8,7 @@ THIS_VERSION = "0.3-SNAPSHOT"
 
 # Repositories
 repositories.remote << "http://www.ibiblio.org/maven2/"
+repositories.remote << "http://akka.io/repository"
 repositories.release_to[:url] =
   if THIS_VERSION =~ /-SNAPSHOT$/
     "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external-snapshots"
@@ -20,6 +21,7 @@ JODA_TIME = "joda-time:joda-time:jar:1.6.2"
 JUNG = group("jung-api", "jung-graph-impl", "jung-algorithms", "jung-visualization", :version => "2.0", :under => "net.sf.jung")
 COLLECTIONS_GENERIC = "net.sourceforge.collections:collections-generic:jar:4.01"
 COMMONS_MATH = "org.apache.commons:commons-math:jar:2.2"
+AKKA = group("akka-actor", :version=>"1.1.2", :under=>"se.scalablesolutions.akka")
 
 # Project
 desc "The Retistruen Project"
@@ -30,7 +32,7 @@ define THIS_ARTIFACT do
 
   resources
 
-  compile.with JODA_TIME, JUNG, COLLECTIONS_GENERIC, COMMONS_MATH
+  compile.with JODA_TIME, JUNG, COLLECTIONS_GENERIC, COMMONS_MATH, AKKA
   compile.using :debug => false
 
   test.resources

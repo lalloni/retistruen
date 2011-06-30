@@ -1,9 +1,6 @@
 package org.retistruen.instrument
 
-import org.retistruen.CachingEmitter
-import org.retistruen.Source
-import org.retistruen.OpenSource
-import org.retistruen.ReadableFromString
+import org.retistruen._
 
 /** A simple [[org.retistruen.Source]] [[org.retistruen.Emitter]] to be used as entry point */
 class SourceEmitter[T](val name: String)

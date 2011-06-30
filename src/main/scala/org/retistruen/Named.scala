@@ -5,6 +5,6 @@ trait Named {
 
   val name: String
 
-  override def toString = name
+  override def toString = super.toString + "(name=%s)" format name
 
 }

@@ -1,8 +1,6 @@
 package org.retistruen.instrument
 
-import org.retistruen.Emitter
-import org.retistruen.Receiver
-import org.retistruen.Datum
+import org.retistruen._
 
 /**
  * Records data received.

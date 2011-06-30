@@ -1,7 +1,7 @@
 package org.retistruen.survey
 
 import java.util.concurrent.atomic.AtomicInteger
-import org.retistruen.{ Source, Tagging, Datum }
+import org.retistruen._
 import org.joda.time.Instant
 
 /**

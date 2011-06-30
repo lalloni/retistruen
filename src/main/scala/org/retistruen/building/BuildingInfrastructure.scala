@@ -15,6 +15,10 @@ trait BuildingInfrastructure {
 
   final def components = comps
 
+  protected def select[T](implicit m: Manifest[T]): Seq[T] = components
+    .filter(m.erasure.isInstance(_))
+    .map(_.asInstanceOf[T])
+
   protected final def register[N <: Named](component: N): N = {
     comps :+= component
     registered(component)

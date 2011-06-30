@@ -4,10 +4,9 @@
  */
 package org.retistruen.survey
 
-import org.joda.time.{ ReadablePeriod, Period, Instant }
-import org.retistruen.{ Source, Datum, Tagging }
-import scala.actors.{ TIMEOUT, Actor }
-import scala.collection.mutable.Publisher
+import org.joda.time.{Instant, Period, ReadablePeriod}
+import org.retistruen._
+import scala.actors.{Actor, TIMEOUT}
 
 case object Stop
 
@@ -28,9 +27,8 @@ class TickTimer(target: Actor, period: ReadablePeriod) extends Actor {
     }
   }
 
-  def stop = this ! Stop
-
-  start
+  def stop =
+    this ! Stop
 
 }
 
@@ -44,6 +42,8 @@ class FrequencySurvey(target: Source[Int], period: ReadablePeriod, tagging: Opti
 
   private val timer = new TickTimer(this, period)
 
+  timer.start
+
   def act = loop {
     react {
       case tick: Tick ⇒
@@ -51,12 +51,16 @@ class FrequencySurvey(target: Source[Int], period: ReadablePeriod, tagging: Opti
         target << Datum(beats.count(_.instant isBefore tick.instant), tick.instant, tagging)
       case beat: Beat ⇒
         beats :+= beat
+      case Stop ⇒
+        timer.stop
+        exit
     }
   }
 
   def beat =
     this ! new Beat
 
-  start
+  def stop =
+    this ! Stop
 
 }

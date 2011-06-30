@@ -21,10 +21,6 @@ trait JMX extends Named {
 
   this: BuildingInfrastructure ⇒
 
-  private def select[T](implicit m: Manifest[T]): Seq[T] = components
-    .filter(m.erasure.isInstance(_))
-    .map(_.asInstanceOf[T])
-
   object MBean extends DynamicMBean {
 
     def attributes: Array[MBeanAttributeInfo] =

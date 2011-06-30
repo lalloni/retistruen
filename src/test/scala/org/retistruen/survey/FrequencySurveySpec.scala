@@ -21,9 +21,13 @@ class FrequencySurveySpec extends Spec with ShouldMatchers {
 
         val freq = new FrequencySurvey(source, seconds(2))
 
+        freq.start
+
         Thread.sleep(1000)
         1.to(100).foreach(_ ⇒ freq.beat)
         Thread.sleep(2000)
+
+        freq.stop
 
         receiver.dataValues.headOption should equal(Some(100))
 
@@ -50,10 +54,14 @@ class FrequencySurveySpec extends Spec with ShouldMatchers {
 
         val survey = new FrequencySurvey(source, seconds(1))
 
+        survey.start
+
         1.to(100).foreach { _ ⇒
           Thread.sleep(100)
           survey.beat
         }
+
+        survey.stop
 
         lastValue should equal(10)
 

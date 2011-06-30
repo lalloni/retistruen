@@ -9,8 +9,7 @@ import org.joda.time.Instant
  *  @define Datum [[org.retistruen.Datum]]
  *  @define Emits Emits the value wrapped in the given $Datum to all registered $Receiver
  *  @define Registers Registers the $Receiver to be sent values emitted by this Emitter.
- *  @define EmitsValue Emits the value provided wrapped in a new $Datum
- */
+ *  @define EmitsValue Emits the value provided wrapped in a new $Datum */
 trait Emitter[T] extends Named {
 
   private var receivers: Set[Receiver[T]] = Set.empty
@@ -19,8 +18,10 @@ trait Emitter[T] extends Named {
   def registered: Set[Receiver[T]] = receivers
 
   /** $Registers */
-  def register(rec: Receiver[T]): Unit =
+  def register(rec: Receiver[T]): Unit = {
     receivers = receivers + rec
+    rec.registered(this)
+  }
 
   /** $Registers */
   def >>(other: Receiver[T]): Unit = register(other)

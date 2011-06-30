@@ -1,6 +1,6 @@
 package org.retistruen.instrument
 
-import org.retistruen.{ Collector, Datum, Emitter }
+import org.retistruen._
 
 class SizeCollector[T](val name: String, val size: Int) extends Collector[T] {
 
