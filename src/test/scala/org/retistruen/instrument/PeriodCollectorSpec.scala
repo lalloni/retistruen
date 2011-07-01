@@ -21,9 +21,9 @@ class PeriodCollectorSpec extends Spec with ShouldMatchers {
       coll >> rec
       coll.start
       sleep(500)
-      for (d ← data) {
-        so << Datum(d)
-        sleep(500)
+      for (g ← data.grouped(2)) {
+        g foreach (so << Datum(_))
+        sleep(1000)
       }
       coll.stop
       val groups = data.grouped(2).filter(_.size == 2).toSeq
