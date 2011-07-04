@@ -2,13 +2,21 @@ package org.retistruen
 
 trait Source[T] extends Emitter[T] {
 
-  /** $Emits */
-  def <<(datum: Datum[T]) = emit(datum)
+  def push(datum: Datum[T]): Unit =
+    emit(datum)
 
-  /** $EmitsValue */
-  def <<(some: T) = emit(some)
+  def push(some: T*): Unit =
+    some foreach (emit(_))
 
-  /** $EmitsValue */
-  def <<<(some: T*) = some foreach (emit _)
+  // Scala syntax sugar follows...
+
+  def <<(datum: Datum[T]): Unit =
+    push(datum)
+
+  def <<(some: T): Unit =
+    push(some)
+
+  def <<<(some: T*): Unit =
+    push(some: _*)
 
 }
