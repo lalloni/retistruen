@@ -7,7 +7,7 @@ THIS_ARTIFACT = "retistruen"
 THIS_VERSION = "0.4-SNAPSHOT"
 
 # Repositories
-repositories.remote << "http://www.ibiblio.org/maven2/"
+repositories.remote << "http://www.ibiblio.org/maven2"
 repositories.remote << "http://akka.io/repository"
 repositories.release_to[:url] =
 if THIS_VERSION =~ /-SNAPSHOT$/
