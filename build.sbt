@@ -29,4 +29,11 @@ libraryDependencies ++= (
 
 publishMavenStyle := true
 
-publishTo := Some(Resolver.file("Test Repository", file("target/repository")))
+//publishTo := Some(Resolver.file("Test Repository", file("target/repository")))
+
+publishTo <<= version { (version: String) =>
+  if(version endsWith "-SNAPSHOT") 
+    Some("DIT External Snapshots" at "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external-snapshots")
+  else 
+    Some("DIT External Releases" at "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external")
+}
