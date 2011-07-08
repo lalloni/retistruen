@@ -18,6 +18,9 @@ package object jmx {
   def mbeanServer(domain: String): Option[MBeanServer] = mbeanServers(domain).headOption
 
   def bestMBeanServer(domain: String): MBeanServer =
-    mbeanServer(domain).getOrElse(ManagementFactory.getPlatformMBeanServer)
+    mbeanServer(domain).getOrElse(platformMBeanServer)
 
+  lazy val platformMBeanServer: MBeanServer =
+    ManagementFactory.getPlatformMBeanServer
+    
 }

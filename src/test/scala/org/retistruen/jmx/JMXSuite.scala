@@ -42,20 +42,10 @@ class JMXSuite extends FunSuite with ShouldMatchers {
 
     1 to 1000 foreach { _ ⇒ model.s1 << math.random * 1000 }
     1 to 1000 foreach { _ ⇒ model.s2 << math.random * 100 }
-
-    trait Ops {
-      def generate
-    }
-
-    val op = new Ops {
-      def generate =
-        1 to 1000 foreach { _ ⇒
-          model.s1 << math.random * 1000
-          Thread.sleep((math.random * 5).toInt)
-        }
-    }
-
-    bestMBeanServer("jboss").registerMBean(new StandardMBean(op, classOf[Ops]), ObjectName.getInstance("retistruen:type=generator"))
+    
+    model.registerMBeans
+    
+    model.unregisterMBeans
 
   }
 
