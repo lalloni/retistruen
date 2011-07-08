@@ -1,8 +1,6 @@
 package org.retistruen.instrument
 
-import org.retistruen.instrument.reduce.ReduceFunction
-import org.retistruen.{ Datum, Emitter, Functor }
-import org.retistruen.SimpleFunctor
+import org.retistruen._
 
 class Reducer[T, R](val name: String, val function: Seq[Datum[T]] ⇒ Datum[R])
     extends SimpleFunctor[Seq[Datum[T]], R] {

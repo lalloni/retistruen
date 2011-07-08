@@ -7,16 +7,12 @@ package org.retistruen.instrument
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.Spec
 
-/**
- * @author Pablo Lalloni <plalloni@gmail.com>
- *  @since 30/05/2011 15:05:26
- */
 class SlidingMeanSpec extends Spec with ShouldMatchers {
 
   describe("A SlidingMean") {
 
     describe("when just created") {
-      val mean = new SlidingMean[Double]("sliding-mean", 2)
+      val mean = new SlidingMean[Double]("sliding-mean", Prune.bySize(2))
       it("must have no cached value") {
         mean.last should equal(None)
       }
@@ -26,7 +22,7 @@ class SlidingMeanSpec extends Spec with ShouldMatchers {
 
     describe("when given the sequence " + data.mkString("(", ",", ")")) {
       val source = new SourceEmitter[Double]("source")
-      val mean = new SlidingMean[Double]("sliding-mean", 2)
+      val mean = new SlidingMean[Double]("sliding-mean", Prune.bySize(2))
       source >> mean
       var previous: Double = 0
       for (current ← data) {

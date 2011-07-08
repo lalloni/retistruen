@@ -2,7 +2,8 @@ package org.retistruen
 
 import org.retistruen.building._
 
-/** Represents a complete network of $Emitter and $Receiver.
+/**
+ * Represents a complete network of $Emitter and $Receiver.
  *
  *  This is the main entry point to the library, this class provides both a means
  *  to build the model and to reference its parts afterwards.
@@ -39,9 +40,19 @@ import org.retistruen.building._
  *  @see [[org.retistruen.view.ModelViewer]]
  */
 class Model(val name: String) extends Named
-  with BuildingInfrastructure
-  with InstrumentBuilding
-  with CollectorBuilding
-  with ReducerBuilding
-  with OpenSourceBuilding
-  with MiscBuilding
+    with BuildingInfrastructure
+    with InstrumentBuilding
+    with CollectorBuilding
+    with ReducerBuilding
+    with SliderBuilding
+    with OpenSourceBuilding
+    with MiscBuilding
+    with Start with Stop {
+
+  def start = select[Start].foreach(_.start)
+
+  def stop = select[Stop].foreach(_.stop)
+
+  implicit def cachingEmitterLastValue[T](e: CachingEmitter[T]): T = e.lastValue.get
+
+}

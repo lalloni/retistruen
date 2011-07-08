@@ -106,13 +106,13 @@ class Variance[T: Fractional] extends ReduceFunction[T, T] {
 }
 
 class Skewness[T: Fractional] extends ReduceFunction[T, T] {
-  val name = "variance"
+  val name = "skewness"
   def apply(data: Seq[Datum[T]]): Datum[T] =
     Datum(algo.skewness(data.map(_.value)))
 }
 
 class Kurtosis[T: Fractional] extends ReduceFunction[T, T] {
-  val name = "variance"
+  val name = "kurtosis"
   def apply(data: Seq[Datum[T]]): Datum[T] =
     Datum(algo.kurtosis(data.map(_.value)))
 }

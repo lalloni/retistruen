@@ -17,4 +17,7 @@ trait MiscBuilding {
   protected def log[T](level: Level) =
     register { e: Emitter[T] ⇒ new Logger[T](receiverName(e, "log"), level) }
 
+  protected def identity[T] =
+    register { e: Emitter[T] ⇒ new Identity[T](receiverName(e, "id")) }
+
 }
