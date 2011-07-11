@@ -4,7 +4,7 @@ require 'buildcustomizations'
 # Project Meta
 THIS_GROUP = "org.retistruen"
 THIS_ARTIFACT = "retistruen"
-THIS_VERSION = "0.4-SNAPSHOT"
+THIS_VERSION = "0.4"
 
 # Repositories
 repositories.remote << "http://www.ibiblio.org/maven2"
