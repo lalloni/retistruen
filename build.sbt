@@ -4,15 +4,17 @@ version := "0.4-SNAPSHOT"
 
 organization := "org.retistruen"
 
-scalaVersion := "2.9.0"
+scalaVersion := "2.9.1"
 
 resolvers += "Akka Repository" at "http://akka.io/repository"
 
+// Dependencies ================================================================
+
 libraryDependencies ++= Seq(
 	"joda-time" % "joda-time" % "1.6.2",
-	"se.scalablesolutions.akka" % "akka-actor" % "1.1.2",
-	"org.clapper" %% "grizzled-slf4j" % "0.5",
-	"org.slf4j" % "slf4j-api" % "1.6.1") ++ 
+	"se.scalablesolutions.akka" % "akka-actor" % "1.1.3",
+	"org.clapper" %% "grizzled-slf4j" % "0.6.6",
+	"org.slf4j" % "slf4j-api" % "1.6.2") ++ 
 	Seq(
 		"jung-api", 
 		"jung-graph-impl", 
@@ -27,11 +29,13 @@ libraryDependencies ++= (
         .map("ch.qos.logback" % _ % "0.9.29")
 ).map(_ % "test") 
 
+// Publishing ==================================================================
+
 publishMavenStyle := true
 
 //publishTo := Some(Resolver.file("Test Repository", file("target/repository")))
 
-publishTo <<= version { (version: String) =>
+publishTo <<= version { (version: String) ⇒
   if(version endsWith "-SNAPSHOT") 
     Some("DIT External Snapshots" at "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external-snapshots")
   else 
