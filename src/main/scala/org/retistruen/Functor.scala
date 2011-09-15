@@ -1,6 +1,6 @@
 package org.retistruen
 
-sealed trait Functor[T, R] extends Receiver[T] with Emitter[R]
+trait Functor[T, R] extends Receiver[T] with Emitter[R]
 
 trait SimpleFunctor[T, R] extends Functor[T, R] with CachingEmitter[R] {
 

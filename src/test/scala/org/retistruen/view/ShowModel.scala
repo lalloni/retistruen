@@ -22,7 +22,11 @@ object MyModel extends Model("mymodel") with JMX {
   min1 --> reduce.min --> rec
   min1 --> reduce.mean --> rec
   min1 --> reduce.stddev --> rec
-  min1 --> reduce("parity", { seq: Seq[Double] ⇒ seq.map(d ⇒ 1 - (d % 2)).sum }) // cálculo de "paridad" del bloque
+
+  min1 --> reduce("parity", { seq: Seq[Double] ⇒
+    if (seq.isEmpty) None
+    else Some(seq.map(d ⇒ 1 - (d % 2)).sum)
+  }) // cálculo de "paridad" del bloque
 
   s1 --> collect(minutes(5)) --> reduce.mean
 

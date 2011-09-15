@@ -1,5 +1,5 @@
 
-/* ==== General ============================================================= */
+//====== General =============================================================//
 
 name := "retistruen"
 
@@ -9,11 +9,9 @@ organization := "plalloni"
 
 scalaVersion := "2.9.1"
 
-crossScalaVersions := Seq("2.9.1", "2.8.1")
-
 resolvers += "Akka Repository" at "http://akka.io/repository"
 
-/* ==== Dependencies ======================================================== */
+//===== Dependencies =========================================================//
 
 libraryDependencies ++= Seq(
 	"joda-time" % "joda-time" % "1.6.2",
@@ -27,7 +25,7 @@ libraryDependencies ++= Seq(
 		"jung-visualization")
 			.map("net.sf.jung" % _ % "2.0")
 
-/* ==== Test Dependencies =================================================== */
+//===== Test Dependencies ====================================================//
 
 libraryDependencies ++= (
     Seq("org.scalatest" %% "scalatest" % "1.6.1", 
@@ -36,7 +34,7 @@ libraryDependencies ++= (
         .map("ch.qos.logback" % _ % "0.9.29")
 ).map(_ % "test") 
 
-/* ==== Publishing ========================================================== */
+//===== Publishing ===========================================================//
 
 publishMavenStyle := true
 
@@ -48,3 +46,4 @@ publishTo <<= version { (version: String) ⇒
   else 
     Some("DIT External Releases" at "http://artifactsddit.afip.gov.ar/nexus/content/repositories/external")
 }
+
