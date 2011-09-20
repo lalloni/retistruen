@@ -8,8 +8,8 @@ trait ReducerBuilding {
 
   this: BuildingInfrastructure ⇒
 
-  protected def reduce[T, R](name: String, function: Seq[T] ⇒ Option[R]) =
-    register { e: Emitter[Seq[Datum[T]]] ⇒ new Reducer[T, R](receiverName(e, "reduce", name), { seq: Seq[Datum[T]] ⇒ function(seq.map(_.value)).map(Datum(_)) }) }
+  protected def reduce[T, R](name: String, function: Seq[T] ⇒ R) =
+    register { e: Emitter[Seq[Datum[T]]] ⇒ new Reducer[T, R](receiverName(e, "reduce", name), { seq: Seq[Datum[T]] ⇒ Datum(function(seq.map(_.value))) }) }
 
   protected def reduce[T, R] = new ReducerBuilding[T, R]
 

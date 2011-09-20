@@ -3,11 +3,11 @@ package org.retistruen.instrument.reduce
 import org.retistruen.Datum 
 import org.retistruen.Named
 
-trait ReduceFunction[T, R] extends (Seq[Datum[T]] ⇒ Option[Datum[R]]) with Named
+trait ReduceFunction[T, R] extends (Seq[Datum[T]] ⇒ Datum[R]) with Named
 
 class Max[T: Ordering] extends ReduceFunction[T, T] {
   val name = "max"
-  def apply(data: Seq[Datum[T]]): Option[Datum[T]] =
+  def apply(data: Seq[Datum[T]]): Datum[T] =
     Datum(data.map(_.value).max)
 }
 
