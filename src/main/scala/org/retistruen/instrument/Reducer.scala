@@ -3,9 +3,9 @@ package org.retistruen.instrument
 import org.retistruen._
 
 class Reducer[T, R](val name: String, val function: Seq[Datum[T]] ⇒ Datum[R])
-    extends SimpleFunctor[Seq[Datum[T]], R] {
+    extends Functor[Seq[Datum[T]], R] with CachingEmitter[R] {
 
-  protected def operate(datum: Datum[Seq[Datum[T]]]): Datum[R] =
-    function(datum.value)
+  def receive(emitter: Emitter[Seq[Datum[T]]], datum: Datum[Seq[Datum[T]]]) =
+    if (!datum.value.isEmpty) emit(function(datum.value))
 
 }
