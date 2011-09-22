@@ -55,19 +55,23 @@ object MyModel extends Model("mymodel") with JMX {
 
 }
 
-object ShowMyModel extends App {
+object ShowMyModel {
 
-  MyModel.registerMBeans
+  def main(args: Array[String]): Unit = {
 
-  new ModelViewer(MyModel).show
+    MyModel.registerMBeans
 
-  MyModel.s1 << 0
-  MyModel.s2 << 0
+    new ModelViewer(MyModel).show
 
-  (1 to 1000000) foreach { v ⇒
-    MyModel.s1 << math.random * (math.random * v)
-    Thread.sleep((math.random * 5).toInt)
-    MyModel.s3 << (math.random * 100).toInt
+    MyModel.s1 << 0
+    MyModel.s2 << 0
+
+    (1 to 1000000) foreach { v ⇒
+      MyModel.s1 << math.random * (math.random * v)
+      Thread.sleep((math.random * 5).toInt)
+      MyModel.s3 << (math.random * 100).toInt
+    }
+
   }
 
 }

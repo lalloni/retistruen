@@ -1,6 +1,6 @@
 package org.retistruen.instrument.reduce
 
-import org.retistruen.Datum 
+import org.retistruen.Datum
 import org.retistruen.Named
 
 trait ReduceFunction[T, R] extends (Seq[Datum[T]] ⇒ Datum[R]) with Named
@@ -74,7 +74,10 @@ class Close[T] extends ReduceFunction[T, T] {
 class Mode[T] extends ReduceFunction[T, T] {
   val name = "mode"
   def apply(data: Seq[Datum[T]]): Datum[T] =
-    Datum(data.map(_.value).groupBy(identity).maxBy(_._2.size)._1)
+    Datum(data.map(_.value).groupBy(identity).max(new Ordering[(Any, Seq[Any])] {
+      def compare(x: (Any, Seq[Any]), y: (Any, Seq[Any])): Int =
+        x._2.size compare y._2.size
+    })._1)
 }
 
 class Median[T: Fractional] extends ReduceFunction[T, T] {
