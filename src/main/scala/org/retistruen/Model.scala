@@ -3,7 +3,7 @@ package org.retistruen
 import org.retistruen.building._
 
 /**
- * Represents a complete network of $Emitter and $Receiver.
+ * Represents a complete network of Emitter and Receiver.
  *
  *  This is the main entry point to the library, this class provides both a means
  *  to build the model and to reference its parts afterwards.
