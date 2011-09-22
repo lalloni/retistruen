@@ -1,9 +1,3 @@
-/.classpath
-/.project
-/.settings
-/target
-/.scala_dependencies
-/reports
-/lib
-/lib_managed
-.cache
+target
+.*
+
