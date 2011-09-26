@@ -1,7 +1,0 @@
-@startuml
-
-Source -> Variable: set(d: Datum)
-
-Variable -> Study: observe(v: Variable, d: Datum)
-
-@enduml
