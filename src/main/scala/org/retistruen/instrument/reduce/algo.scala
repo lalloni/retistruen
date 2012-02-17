@@ -12,12 +12,14 @@ package object algo {
     product
   }
 
+  /** See http://en.wikipedia.org/wiki/Arithmetic_mean */
   def mean[T: Fractional](seq: Seq[T]) = {
     assert(!seq.isEmpty, "Can not calculate the mean of an empty sequence")
     val t = implicitly[Fractional[T]]; import t._
     seq.sum / t.fromInt(seq.size)
   }
 
+  /** See http://en.wikipedia.org/wiki/Moment_(mathematics) */
   def moment[T: Fractional](k: Int)(seq: Seq[T]): T = {
     assert(!seq.isEmpty, "Can not calculate a moment of an empty sequence")
     val t = implicitly[Fractional[T]]; import t._
@@ -25,12 +27,16 @@ package object algo {
     seq.map(e ⇒ intpow(e - u, k)).sum
   }
 
+  /** See http://en.wikipedia.org/wiki/Variance */
   def variance[T: Fractional](seq: Seq[T]) = moment(2)(seq)
 
+  /** See http://en.wikipedia.org/wiki/Skewness */
   def skewness[T: Fractional](seq: Seq[T]) = moment(3)(seq)
 
+  /** See http://en.wikipedia.org/wiki/Kurtosis */
   def kurtosis[T: Fractional](seq: Seq[T]) = moment(4)(seq)
 
+  /** See http://en.wikipedia.org/wiki/Standard_deviation */
   def standardDeviation[T: Fractional](seq: Seq[T]) =
     math.sqrt(implicitly[Fractional[T]].toDouble(variance(seq)))
 
@@ -41,6 +47,7 @@ package object algo {
     (t.fromInt(100) / t.fromInt(size)) * (t.fromInt(o) - (t.one / t.fromInt(2)))
   }
 
+  /** Implements the algorithm described in http://en.wikipedia.org/wiki/Percentile#Nearest_rank */
   def roundedPercentile[T: Ordering](p: Int)(seq: Seq[T]): T = {
     assert(!seq.isEmpty, "Can not calculate the mean of an empty sequence")
     assert(p >= 0 && p <= 100, "Percentile must be between 0 and 100 (inclusive): " + p)
@@ -50,6 +57,8 @@ package object algo {
     value(ordinalRank)
   }
 
+  /** See http://en.wikipedia.org/wiki/Percentile
+    * Implements http://en.wikipedia.org/wiki/Percentile#Linear_interpolation_between_closest_ranks */
   def interpolatedPercentile[T: Fractional](p: Int)(seq: Seq[T]): T = {
     assert(!seq.isEmpty, "Can not calculate the mean of an empty sequence")
     assert(p >= 0 && p <= 100, "Percentile must be between 0 and 100 (inclusive): " + p)
