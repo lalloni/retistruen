@@ -10,13 +10,18 @@ trait SimpleFunctor[T, R] extends Functor[T, R] with CachingEmitter[R] {
 
 }
 
-trait SlidingFunctor[T, R] extends Functor[T, R] with SlidingReceiver[T] with CachingEmitter[R] {
+trait SlidingFunctor[T, R] extends Functor[T, R] with SlidingReceiver[T] with CachingEmitter[R] with Reset {
 
   protected def operate(data: Seq[Datum[T]]): Datum[R]
 
   override def receive(emitter: Emitter[T], datum: Datum[T]) = {
     super.receive(emitter, datum)
     emit(operate(window))
+  }
+
+  override def reset {
+    super[SlidingReceiver].reset
+    super[CachingEmitter].reset
   }
 
 }

@@ -1,9 +1,7 @@
 package org.retistruen
 
-/**
- * Represents an object capable of receiving typed values from an [[org.retistruen.Emitter]].
- *  @tparam T The type of the values this Receiver accepts.
- */
+/** Represents an object capable of receiving typed values from an [[org.retistruen.Emitter]].
+  * @tparam T The type of the values this Receiver accepts. */
 trait Receiver[T] extends Named {
 
   private var emitters: Seq[Emitter[T]] = Seq.empty
@@ -18,7 +16,7 @@ trait Receiver[T] extends Named {
 
 }
 
-trait SlidingReceiver[T] extends Receiver[T] {
+trait SlidingReceiver[T] extends Receiver[T] with Reset {
 
   private var data: Seq[Datum[T]] = Seq.empty
 
@@ -30,5 +28,9 @@ trait SlidingReceiver[T] extends Receiver[T] {
 
   def receive(emitter: Emitter[T], datum: Datum[T]) =
     data = slide(data :+ datum)
+
+  def reset {
+    data = Seq.empty
+  }
 
 }

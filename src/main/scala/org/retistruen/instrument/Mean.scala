@@ -7,7 +7,7 @@ package org.retistruen.instrument
 import org.joda.time.Instant
 import org.retistruen._
 
-class AbsoluteMean[@specialized F: Fractional](val name: String) extends SimpleFunctor[F, F] {
+class AbsoluteMean[@specialized F: Fractional](val name: String) extends SimpleFunctor[F, F] with Reset {
 
   val f = implicitly[Fractional[F]]
   import f._
@@ -20,6 +20,12 @@ class AbsoluteMean[@specialized F: Fractional](val name: String) extends SimpleF
     count = count + 1
     mean = mean + (datum.value - mean) / f.fromInt(count)
     Datum(mean)
+  }
+
+  override def reset {
+    super.reset
+    mean = f.zero
+    count = 0
   }
 
 }

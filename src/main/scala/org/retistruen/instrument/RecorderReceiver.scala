@@ -2,12 +2,10 @@ package org.retistruen.instrument
 
 import org.retistruen._
 
-/**
- * Records data received.
- *  Optionally records a sliding window of the last *capacity* values received.
- *  @tparam T  the type of the values received and recorded
- */
-class RecordingReceiver[@specialized T](val name: String, val capacity: Option[Int] = None) extends Receiver[T] {
+/** Records data received.
+  * Optionally records a sliding window of the last *capacity* values received.
+  * @tparam T  the type of the values received and recorded */
+class RecordingReceiver[@specialized T](val name: String, val capacity: Option[Int] = None) extends Receiver[T] with Reset {
 
   private var buffer: Seq[Datum[T]] = Seq.empty
 
@@ -20,7 +18,8 @@ class RecordingReceiver[@specialized T](val name: String, val capacity: Option[I
     for (c ← capacity) buffer = buffer.drop(buffer.size - c)
   }
 
-  def clear =
+  def reset {
     buffer = Seq.empty
+  }
 
 }

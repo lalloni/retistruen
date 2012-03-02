@@ -47,11 +47,13 @@ class Model(val name: String) extends Named
     with SliderBuilding
     with OpenSourceBuilding
     with MiscBuilding
-    with Start with Stop {
+    with Start with Stop with Reset {
 
   def start = select[Start].foreach(_.start)
 
   def stop = select[Stop].foreach(_.stop)
+
+  def reset = select[Reset].foreach(_.reset)
 
   implicit def cachingEmitterLastValue[T](e: CachingEmitter[T]): T = e.lastValue.get
 

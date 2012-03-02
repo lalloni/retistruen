@@ -1,6 +1,6 @@
 package org.retistruen
 
-trait Collector[T] extends Receiver[T] with CachingEmitter[Seq[Datum[T]]] {
+trait Collector[T] extends Receiver[T] with CachingEmitter[Seq[Datum[T]]] with Reset {
 
   private var buf: Seq[Datum[T]] = Seq.empty
 
@@ -14,5 +14,10 @@ trait Collector[T] extends Receiver[T] with CachingEmitter[Seq[Datum[T]]] {
 
   def receive(emitter: Emitter[T], datum: Datum[T]) =
     buf :+= datum
+    
+  override def reset {
+    super.reset
+    clear
+  }
 
 }

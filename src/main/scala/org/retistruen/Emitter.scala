@@ -56,7 +56,7 @@ trait Emitter[T] extends Named {
 }
 
 /** $Emitter that keeps the last emitted $Datum cached for further access */
-trait CachingEmitter[T] extends Emitter[T] with Pollable[T] {
+trait CachingEmitter[T] extends Emitter[T] with Pollable[T] with Reset {
 
   private var cached: Option[Datum[T]] = None
 
@@ -72,5 +72,9 @@ trait CachingEmitter[T] extends Emitter[T] with Pollable[T] {
   }
 
   def poll = lastValue
+  
+  def reset {
+    cached = None
+  }
 
 }
