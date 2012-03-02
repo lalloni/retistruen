@@ -5,9 +5,3 @@ trait Start {
 }
 
 case object Start
-
-trait Stop {
-  def stop
-}
-
-case object Stop
