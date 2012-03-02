@@ -58,22 +58,22 @@ trait JMX extends Named {
   val jmxRegistrationDomain = "org.retistruen"
 
   private def on(key: (String, String)*) =
-    ObjectName(jmxRegistrationDomain, table(("model" -> name) :: key.toList))
+    ObjectName(jmxRegistrationDomain, table(("model" → name) :: key.toList))
 
   def registerMBeans = {
     val server = bestMBeanServer("jboss")
     server.registerMBean(MBean,
-      on("type" -> "model", "name" -> name))
+      on("type" → "model", "name" → name))
     for (source ← select[OpenSource[_]])
       server.registerMBean(new StandardMBean(new SourceObject(source), classOf[SourceMBean[_]]),
-        on("type" -> "source", "name" -> source.name))
+        on("type" → "source", "name" → source.name))
   }
 
   def unregisterMBeans = {
     val server = bestMBeanServer("jboss")
-    server.unregisterMBean(on("type" -> "model", "name" -> name))
+    server.unregisterMBean(on("type" → "model", "name" → name))
     for (source ← select[OpenSource[_]])
-      server.unregisterMBean(on("type" -> "source", "name" -> source.name))
+      server.unregisterMBean(on("type" → "source", "name" → source.name))
   }
 
 }

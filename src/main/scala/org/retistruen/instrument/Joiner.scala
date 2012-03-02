@@ -18,7 +18,7 @@ class Joiner[T](val name: String)
 
     def receive = {
       case Reception(emitter, datum) ⇒
-        data = data + (emitter -> datum)
+        data = data + (emitter → datum)
         val values = sources.map(data.get(_))
         if (!values.contains(None)) emit(Datum(values.map(_.get)))
     }
