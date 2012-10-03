@@ -7,9 +7,9 @@ version := "0.7"
 
 organization := "plalloni"
 
-scalaVersion := "2.9.1"
+scalaVersion := "2.9.2"
 
-crossScalaVersions := Seq("2.9.3", "2.9.2", "2.9.1", "2.9.0-1", "2.9.0", "2.8.1", "2.8.0")
+crossScalaVersions := Seq("2.9.2", "2.9.1", "2.9.0-1", "2.9.0", "2.8.1", "2.8.0")
 
 resolvers += "Akka Releases" at "http://repo.akka.io/releases"
 
@@ -17,7 +17,7 @@ resolvers += "Akka Releases" at "http://repo.akka.io/releases"
 
 libraryDependencies ++= Seq(
     "joda-time" % "joda-time" % "1.6.2",
-    "org.clapper" %% "grizzled-slf4j" % "0.6.6",
+    "org.clapper" %% "grizzled-slf4j" % "0.6.9",
     "org.slf4j" % "slf4j-api" % "1.6.2") ++ 
     Seq("jung-api",
         "jung-graph-impl", 
