@@ -40,11 +40,11 @@ package object algo {
   def standardDeviation[T: Fractional](seq: Seq[T]) =
     math.sqrt(implicitly[Fractional[T]].toDouble(variance(seq)))
 
-  def percentRank[T: Fractional](size: Int)(o: Int): T = {
+  def percentRank[T: Fractional](size: Int)(n: Int): T = {
     assert(size > 0, "Size must be greater than zero to calculate percent rank")
-    assert(o >= 0 && o <= size, "Ordinal must be between 0 and size (inclusive): " + o)
+    assert(n >= 1 && n <= size, "Ordinal must be between 0 and size (inclusive): " + n)
     val t = implicitly[Fractional[T]]; import t._
-    (t.fromInt(100) / t.fromInt(size)) * (t.fromInt(o) - (t.one / t.fromInt(2)))
+    (fromInt(100) / fromInt(size)) * (fromInt(n) - (one / fromInt(2)))
   }
 
   /** Implements the algorithm described in http://en.wikipedia.org/wiki/Percentile#Nearest_rank */
@@ -58,23 +58,29 @@ package object algo {
   }
 
   /** See http://en.wikipedia.org/wiki/Percentile
-    * Implements http://en.wikipedia.org/wiki/Percentile#Linear_interpolation_between_closest_ranks */
+    * Implements http://en.wikipedia.org/wiki/Percentile#Linear_interpolation_between_closest_ranks
+    */
   def interpolatedPercentile[T: Fractional](p: Int)(seq: Seq[T]): T = {
-    assert(!seq.isEmpty, "Can not calculate the mean of an empty sequence")
-    assert(p >= 0 && p <= 100, "Percentile must be between 0 and 100 (inclusive): " + p)
+    assert(!seq.isEmpty, "Can not calculate the interpolated percentile of an empty sequence")
     val t = implicitly[Fractional[T]]; import t._
-    val value = seq.sorted
-    val size = value.size
-    val baseOrdinalRank = math.floor((p / 100.0) * size).toInt
-    val nextOrdinalRank = baseOrdinalRank + 1
+    val sorted = seq.sorted
+    // one-based indexing of sorted
+    def value(i: Int) = sorted(i - 1)
+    val size = seq.size
     val rank = percentRank[T](size)(_)
-    val baseValue = value(baseOrdinalRank)
-    val nextValue = value(nextOrdinalRank)
-    val baseRank = rank(baseOrdinalRank)
-    val nextRank = rank(nextOrdinalRank)
-    baseValue +
-      t.fromInt(size) * (nextRank - baseRank) /
-      t.fromInt(100) * (nextValue - baseValue)
+    val P = t.fromInt(p)
+    if (P < rank(1)) {
+      sorted.head
+    } else if (P > rank(size)) {
+      sorted.last
+    } else {
+      (1 to size)
+        .find(k ⇒ rank(k) == P || rank(k) < P && P < rank(k + 1))
+        .map(k ⇒
+          if (P == rank(k)) value(k)
+          else value(k) + fromInt(size) * (((P - rank(k)) / fromInt(100)) * (value(k + 1) - value(k))))
+        .get
+    }
   }
 
   def interpolatedQuartile[T: Fractional](q: Int)(values: Seq[T]) = {
