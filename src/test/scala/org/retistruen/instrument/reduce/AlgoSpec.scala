@@ -14,7 +14,7 @@ class AlgoSpec extends FunSuite with ShouldMatchers {
   }
 
   test("interpolatedPercentile") {
-
+    
     algo.interpolatedPercentile(40)(Seq(15.0, 20.0, 35.0, 40.0, 50.0)) should be (27.5)
 
     algo.interpolatedPercentile(50)(Seq(1.0, 2.0, 3.0, 4.0, 5.0)) should be (3.0)
