@@ -3,13 +3,13 @@ package org.retistruen
 import org.joda.time.Instant
 
 /** Emits values as instances of $Datum to the set of registered $Receiver
- *  @tparam T the type of the emitted values
- *  @define Receiver [[org.retistruen.Receiver]]
- *  @define Emitter [[org.retistruen.Emitter]]
- *  @define Datum [[org.retistruen.Datum]]
- *  @define Emits Emits the value wrapped in the given $Datum to all registered $Receiver
- *  @define Registers Registers the $Receiver to be sent values emitted by this Emitter.
- *  @define EmitsValue Emits the value provided wrapped in a new $Datum */
+  * @tparam T the type of the emitted values
+  * @define Receiver [[org.retistruen.Receiver]]
+  * @define Emitter [[org.retistruen.Emitter]]
+  * @define Datum [[org.retistruen.Datum]]
+  * @define Emits Emits the value wrapped in the given $Datum to all registered $Receiver
+  * @define Registers Registers the $Receiver to be sent values emitted by this Emitter.
+  * @define EmitsValue Emits the value provided wrapped in a new $Datum */
 trait Emitter[T] extends Named {
 
   private var receivers: Set[Receiver[T]] = Set.empty
@@ -30,11 +30,10 @@ trait Emitter[T] extends Named {
   def >>>(others: Receiver[T]*): Unit = others foreach register
 
   /** $Registers Also returns the {{$Receiver with Emitter}} as Emitter to
-   *  support a fluent registration idiom like:
-   *  {{{
-   *  emitter1 >> emitterreceiver1 >> emitterreceiver2 >> receiver
-   *  }}}
-   */
+    * support a fluent registration idiom like:
+    * {{{
+    * emitter1 >> emitterreceiver1 >> emitterreceiver2 >> receiver
+    * }}} */
   def >>(other: Receiver[T] with Emitter[T]): Emitter[T] = {
     register(other)
     other
@@ -45,7 +44,7 @@ trait Emitter[T] extends Named {
     receivers.foreach { receiver ⇒
       try receiver.receive(this, datum)
       catch {
-        case e ⇒ e.printStackTrace
+        case e: Exception ⇒ e.printStackTrace
       }
     }
 
@@ -72,7 +71,7 @@ trait CachingEmitter[T] extends Emitter[T] with Pollable[T] with Reset {
   }
 
   def poll = lastValue
-  
+
   def reset {
     cached = None
   }
