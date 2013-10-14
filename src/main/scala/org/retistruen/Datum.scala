@@ -31,7 +31,7 @@ trait Tagged {
 
 /** Represents a value with its creation time and an optional [[org.retistruen.Tagging]]
  *  @tparam T The type of the value represented by this [[org.retistruen.Datum]] */
-case class Datum[@specialized T](value: T, created: ReadableInstant = new Instant, tagging: Option[Tagging] = None) extends Tagged {
+case class Datum[T](value: T, created: ReadableInstant = new Instant, tagging: Option[Tagging] = None) extends Tagged {
 
   def this(value: T, tagging: Option[Tagging]) = this(value, new Instant, tagging)
 
