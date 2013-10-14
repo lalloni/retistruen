@@ -1,10 +1,10 @@
 package org.retistruen.instrument
 
+import org.retistruen.Datum
+import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Spec
-import org.retistruen._
 
-class SizeCollectorSpec extends Spec with ShouldMatchers {
+class SizeCollectorSpec extends FunSpec with ShouldMatchers {
   val data = (1 to 20) map (_ ⇒ (math.random * 100).toInt)
   describe("A SizeCollector of 3") {
     describe("when given " + data) {

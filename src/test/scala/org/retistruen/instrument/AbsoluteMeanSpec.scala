@@ -4,14 +4,14 @@
  */
 package org.retistruen.instrument
 
+import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Spec
 
 /**
  * @author Pablo Lalloni <plalloni@gmail.com>
  * @since 30/05/2011 15:05:26
  */
-class AbsoluteMeanSpec extends Spec with ShouldMatchers {
+class AbsoluteMeanSpec extends FunSpec with ShouldMatchers {
 
   describe("An AbsoluteMean") {
 

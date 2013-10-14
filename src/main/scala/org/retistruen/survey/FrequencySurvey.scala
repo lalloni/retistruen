@@ -4,63 +4,46 @@
  */
 package org.retistruen.survey
 
-import org.joda.time.{Instant, Period, ReadablePeriod}
-import org.retistruen._
-import scala.actors.{Actor, TIMEOUT}
+import scala.concurrent.duration.DurationLong
+
+import org.joda.time.{ Instant, ReadablePeriod }
+import org.retistruen.{ Datum, Source, Tagging }
+
+import akka.actor.{ Actor, actorRef2Scala }
+import grizzled.slf4j.Logging
 
 case object Stop
 
-trait Chronometric {
+sealed trait Chronometric {
   val instant = new Instant
+  override def toString = s"${getClass.getSimpleName}($instant)"
 }
 
-case class Tick() extends Chronometric
+private class Tick extends Chronometric
 
-class TickTimer(target: Actor, period: ReadablePeriod) extends Actor {
+class Beat extends Chronometric
 
-  private val millis = period.toPeriod.toStandardDuration.getMillis
-
-  def act = loop {
-    reactWithin(millis) {
-      case TIMEOUT ⇒ target ! new Tick
-      case Stop    ⇒ exit
-    }
-  }
-
-  def stop =
-    this ! Stop
-
-}
-
-case class Beat() extends Chronometric
-
-class FrequencySurvey(target: Source[Int], period: ReadablePeriod, tagging: Option[Tagging] = None) extends Actor {
+class FrequencySurvey(target: Source[Int], period: ReadablePeriod, tagging: Option[Tagging] = None) extends Actor with Logging {
 
   private val duration = period.toPeriod.toStandardDuration
 
+  private implicit val ec = context.system.dispatcher
+
   private var beats: Seq[Beat] = Seq.empty
 
-  private val timer = new TickTimer(this, period)
+  private val sd = duration.getMillis.millis
 
-  timer.start
+  private var schedule = context.system.scheduler.schedule(sd, sd) { self ! new Tick }
 
-  def act = loop {
-    react {
-      case tick: Tick ⇒
-        beats = beats.filter(_.instant isAfter tick.instant.minus(duration))
-        target << Datum(beats.count(_.instant isBefore tick.instant), tick.instant, tagging)
-      case beat: Beat ⇒
-        beats :+= beat
-      case Stop ⇒
-        timer.stop
-        exit
-    }
+  def receive = {
+    case tick: Tick ⇒
+      beats = beats.filter(_.instant isAfter tick.instant.minus(duration))
+      target << Datum(beats.count(_.instant isBefore tick.instant), tick.instant, tagging)
+    case beat: Beat ⇒
+      beats :+= beat
+    case s @ Stop ⇒
+      schedule.cancel
+      context.stop(self)
   }
-
-  def beat =
-    this ! new Beat
-
-  def stop =
-    this ! Stop
 
 }

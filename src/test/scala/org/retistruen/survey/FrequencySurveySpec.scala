@@ -1,14 +1,17 @@
 package org.retistruen.survey
 
-import org.joda.time.Seconds._
-import org.joda.time.Duration
-import org.retistruen.instrument.{ RecordingReceiver, SourceEmitter }
-import org.retistruen.{ Datum, Emitter, Receiver }
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Spec
 import scala.collection.mutable.Buffer
 
-class FrequencySurveySpec extends Spec with ShouldMatchers {
+import org.joda.time.Duration
+import org.joda.time.Seconds.seconds
+import org.retistruen.{ Datum, Emitter, Receiver }
+import org.retistruen.instrument.{ RecordingReceiver, SourceEmitter }
+import org.scalatest.FunSpec
+import org.scalatest.matchers.ShouldMatchers
+
+import akka.actor.{ ActorSystem, Props }
+
+class FrequencySurveySpec extends FunSpec with ShouldMatchers {
 
   describe("A 2 seconds FrequencySurvey") {
     describe("when receiving 100 beats in less than 2 seconds") {
@@ -19,17 +22,17 @@ class FrequencySurveySpec extends Spec with ShouldMatchers {
 
         source >> receiver
 
-        val freq = new FrequencySurvey(source, seconds(2))
+        val sys = ActorSystem()
 
-        freq.start
+        val freq = sys.actorOf(Props(new FrequencySurvey(source, seconds(2))))
 
-        Thread.sleep(1000)
-        1.to(100).foreach(_ ⇒ freq.beat)
+        Thread.sleep(500)
+        1.to(100).foreach(_ ⇒ freq ! new Beat)
         Thread.sleep(2000)
 
-        freq.stop
-
         receiver.dataValues.headOption should equal(Some(100))
+
+        sys.shutdown
 
       }
     }
@@ -52,16 +55,16 @@ class FrequencySurveySpec extends Spec with ShouldMatchers {
           }
         }
 
-        val survey = new FrequencySurvey(source, seconds(1))
+        val sys = ActorSystem()
 
-        survey.start
+        val freq = sys.actorOf(Props(new FrequencySurvey(source, seconds(1))))
 
         1.to(100).foreach { _ ⇒
           Thread.sleep(100)
-          survey.beat
+          freq ! new Beat
         }
 
-        survey.stop
+        sys.shutdown
 
         lastValue should equal(10)
 

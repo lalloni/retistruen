@@ -1,19 +1,22 @@
 package org.retistruen.instrument
 
 import java.lang.Thread.sleep
-import org.joda.time.DateTimeFieldType._
-import org.joda.time.{ Partial, Seconds }
-import org.retistruen._
-import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Spec
 
-class PeriodCollectorSpec extends Spec with ShouldMatchers {
+import org.joda.time.Seconds
+import org.retistruen.Datum
+import org.scalatest.FunSpec
+import org.scalatest.matchers.ShouldMatchers
+
+import akka.actor.ActorSystem
+
+class PeriodCollectorSpec extends FunSpec with ShouldMatchers {
 
   val data = (1 to 20) map (_ ⇒ (math.random * 100).toInt)
 
   describe("A PeriodCollector of 1 second") {
 
     describe("when given " + data) {
+      implicit val system = ActorSystem()
       val so = new SourceEmitter[Int]("s")
       val coll = new PeriodCollector[Int]("c", Seconds.ONE)
       val rec = new RecordingReceiver[Seq[Datum[Int]]]("r")
@@ -26,6 +29,7 @@ class PeriodCollectorSpec extends Spec with ShouldMatchers {
         sleep(1000)
       }
       coll.stop
+      system.shutdown
       val groups = data.grouped(2).filter(_.size == 2).toSeq
       it("should have emitted " + groups.map(_.mkString("(", ", ", ")")).mkString("(", ", ", ")")) {
         rec.dataValues.map(_.map(_.value)) should equal(groups)

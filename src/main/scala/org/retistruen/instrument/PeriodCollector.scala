@@ -1,31 +1,40 @@
 package org.retistruen.instrument
 
-import grizzled.slf4j.{ Logger ⇒ Log }
-import akka.actor.Actor._
-import akka.actor.{ Actor, ReceiveTimeout }
-import org.joda.time.ReadablePeriod
-import org.retistruen._
+import scala.concurrent.duration.DurationLong
 
-class PeriodCollector[T](val name: String, val period: ReadablePeriod) extends Collector[T] with Start with Stop {
+import org.joda.time.ReadablePeriod
+import org.retistruen.{ Collector, Datum, Emitter, Start, Stop }
+
+import akka.actor.{ ActorSystem, Cancellable }
+import grizzled.slf4j.{ Logger ⇒ Log }
+
+class PeriodCollector[T](val name: String, val period: ReadablePeriod)(implicit system: ActorSystem)
+    extends Collector[T]
+    with Start
+    with Stop {
+
+  private implicit val ec = system.dispatcher
 
   private val log = Log(classOf[PeriodCollector[T]].getName + "." + name)
 
-  private val actor = actorOf(new Actor {
-    self.receiveTimeout = Some(period.toPeriod.toStandardDuration.getMillis)
-    def receive = {
-      case ReceiveTimeout ⇒
-        log.debug("Tick! Emitting buffer " + buffer.mkString("(", ", ", ")"))
-        emit(buffer)
-        clear
-    }
-  })
+  private val duration = period.toPeriod.toStandardDuration.getMillis.millis
 
-  def start = actor.start
+  private var schedule: Option[Cancellable] = None
 
-  def stop = actor.stop
+  def start: Unit =
+    schedule = Some(schedule.getOrElse(system.scheduler.schedule(duration, duration) {
+      log.debug("Tick! Emitting buffer " + buffer.mkString("(", ", ", ")"))
+      emit(buffer)
+      clear
+    }))
+
+  def stop: Unit = {
+    schedule.foreach(_.cancel)
+    schedule = None
+  }
 
   override def receive(emitter: Emitter[T], datum: Datum[T]) = {
-    if (!actor.isRunning) throw new IllegalStateException("PeriodCollector '" + name + "' must be started before use. Have you started your retistruen model?")
+    if (schedule.isEmpty) throw new IllegalStateException("PeriodCollector '" + name + "' must be started before use. Have you started your retistruen model?")
     super.receive(emitter, datum)
   }
 

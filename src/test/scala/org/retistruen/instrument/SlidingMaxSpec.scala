@@ -4,10 +4,10 @@
  */
 package org.retistruen.instrument
 
+import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Spec
 
-class SlidingMaxSpec extends Spec with ShouldMatchers {
+class SlidingMaxSpec extends FunSpec with ShouldMatchers {
 
   def newFixture = {
     val emt = new SourceEmitter[Int]("emitter")

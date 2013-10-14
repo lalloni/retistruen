@@ -5,11 +5,14 @@ import org.joda.time.ReadablePeriod
 import org.retistruen._
 import instrument._
 import reduce._
+import akka.actor.ActorSystem
 
 /** Contains DSL methods for building [[org.retistruen.Model]] */
 trait BuildingInfrastructure {
 
   this: Named ⇒
+
+  implicit val actorSystem: ActorSystem
 
   private var comps: Seq[Named] = Seq.empty
 

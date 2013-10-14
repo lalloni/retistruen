@@ -1,10 +1,9 @@
 package org.retistruen.instrument
 
+import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Spec
-import org.scalatest.WordSpec
 
-class AbsoluteMaxSpec extends Spec with ShouldMatchers {
+class AbsoluteMaxSpec extends FunSpec with ShouldMatchers {
 
   describe("An AbsoluteMax") {
 

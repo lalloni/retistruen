@@ -10,6 +10,7 @@ import org.scalatest.FunSuite
 import java.util.logging.Level._
 import javax.management.StandardMBean
 import javax.management.ObjectName
+import akka.actor.ActorSystem
 
 /**
  * @author Pablo Lalloni <plalloni@gmail.com>
@@ -18,6 +19,8 @@ import javax.management.ObjectName
 class JMXSuite extends FunSuite with ShouldMatchers {
 
   test("Build a complex model") {
+
+    implicit val as = ActorSystem()
 
     val model = new Model("test") with JMX {
 
@@ -42,10 +45,12 @@ class JMXSuite extends FunSuite with ShouldMatchers {
 
     1 to 1000 foreach { _ ⇒ model.s1 << math.random * 1000 }
     1 to 1000 foreach { _ ⇒ model.s2 << math.random * 100 }
-    
+
     model.registerMBeans
-    
+
     model.unregisterMBeans
+
+    as.shutdown
 
   }
 

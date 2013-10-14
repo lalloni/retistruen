@@ -1,14 +1,14 @@
 package org.retistruen.instrument
 
-import org.retistruen._
-import akka.actor.Actor
-import akka.actor.Actor._
+import org.retistruen.{ CachingEmitter, Datum, Emitter, Receiver, Reset }
+
+import akka.actor.{ Actor, ActorSystem, Props, actorRef2Scala }
 import grizzled.slf4j.Logging
 
-class Joiner[T](val name: String)
+class Joiner[T](val name: String)(implicit system: ActorSystem)
     extends Receiver[T]
     with CachingEmitter[Seq[Datum[T]]]
-    with Start with Stop with Reset with Logging {
+    with Reset with Logging {
 
   private case class Reception(emitter: Emitter[T], datum: Datum[T])
 
@@ -27,17 +27,12 @@ class Joiner[T](val name: String)
 
   }
 
-  val worker = actorOf(new Worker)
+  val worker = system.actorOf(Props(new Worker))
 
   def receive(emitter: Emitter[T], datum: Datum[T]): Unit = {
-    if (!worker.isRunning) error("Joiner not started. Have you started your retistruen Model?")
-    else if (!sources.contains(emitter)) error("Emitter unknown: " + emitter)
+    if (!sources.contains(emitter)) error("Emitter unknown: " + emitter)
     else worker ! Reception(emitter, datum)
   }
-
-  def start = worker.start
-
-  def stop = worker.stop
 
   override def reset {
     super.reset

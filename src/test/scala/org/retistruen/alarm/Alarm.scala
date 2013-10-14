@@ -1,9 +1,11 @@
 package org.retistruen.alarm
 
-import org.retistruen._
-import org.joda.time.Minutes._
+import org.joda.time.Minutes.minutes
+import org.retistruen.{ Datum, Emitter, Model, Receiver }
 
-object AlarmModel extends Model("alarm") {
+import akka.actor.ActorSystem
+
+class AlarmModel(override val actorSystem: ActorSystem) extends Model("alarm")(actorSystem) {
 
   val latency = source[Double]("latency")
 
@@ -21,16 +23,21 @@ object AlarmModel extends Model("alarm") {
 
 object Alarm extends Receiver[Seq[Datum[Double]]] {
 
+  val as = ActorSystem()
+
+  val model = new AlarmModel(as)
+
+  import model._
+
   val name = "Alarm"
 
   def receive(e: Emitter[Seq[Datum[Double]]], d: Datum[Seq[Datum[Double]]]) = {
-    import AlarmModel._
     if (medianLatency > medianLatencyMean + medianLatencyStdDev)
       println("Alarm!")
   }
 
   def main(args: Array[String]): Unit = {
-    AlarmModel.window >> this
+    window >> this
   }
 
 }

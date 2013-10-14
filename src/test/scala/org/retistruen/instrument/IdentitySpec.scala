@@ -6,10 +6,10 @@ package org.retistruen.instrument
 
 import org.joda.time.Instant
 import org.retistruen.Datum
+import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Spec
 
-class IdentitySpec extends Spec with ShouldMatchers {
+class IdentitySpec extends FunSpec with ShouldMatchers {
 
   val i = new Instant
 

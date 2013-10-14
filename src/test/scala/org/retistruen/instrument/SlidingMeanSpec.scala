@@ -4,10 +4,10 @@
  */
 package org.retistruen.instrument
 
+import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
-import org.scalatest.Spec
 
-class SlidingMeanSpec extends Spec with ShouldMatchers {
+class SlidingMeanSpec extends FunSpec with ShouldMatchers {
 
   describe("A SlidingMean") {
 

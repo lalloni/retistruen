@@ -2,14 +2,13 @@ package org.retistruen.survey
 
 import org.mockito.Matchers._
 import org.mockito.Mockito._
-import org.retistruen.test.CustomMockitoMatchers._
-import org.retistruen.test.CustomScalaTestMatchers._
 import org.retistruen.{ Datum, Source }
+import org.retistruen.test.CustomMockitoMatchers._
+import org.scalatest.FunSpec
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.Spec
 
-class ConcurrencySurveySpec extends Spec with ShouldMatchers with MockitoSugar {
+class ConcurrencySurveySpec extends FunSpec with ShouldMatchers with MockitoSugar {
 
   describe("A concurrency survey") {
     describe("when entered once") {
@@ -49,7 +48,7 @@ class ConcurrencySurveySpec extends Spec with ShouldMatchers with MockitoSugar {
     describe("when entered and leaved on a block returning a value") {
       it("should have emitted a 0 and returned that value") {
         val (src, con) = fixture
-        expect(4) {
+        assertResult(4) {
           con.survey {
             // Me aseguro de que este bloque se ejecute dentro de ConcurrencySurvey.survey()
             Thread.currentThread.getStackTrace

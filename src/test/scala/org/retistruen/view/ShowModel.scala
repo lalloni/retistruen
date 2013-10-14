@@ -5,8 +5,9 @@ import org.joda.time.Minutes._
 import org.retistruen.jmx.JMX
 import org.retistruen._
 import org.retistruen.instrument.reduce.Max
+import akka.actor.ActorSystem
 
-object MyModel extends Model("mymodel") with JMX {
+class MyModel(override val actorSystem: ActorSystem) extends Model("mymodel")(actorSystem) with JMX {
 
   val s1 = source[Double]("s1")
 
@@ -59,18 +60,26 @@ object ShowMyModel {
 
   def main(args: Array[String]): Unit = {
 
-    MyModel.registerMBeans
+    val as = ActorSystem()
 
-    new ModelViewer(MyModel).show
+    val model = new MyModel(as)
 
-    MyModel.s1 << 0
-    MyModel.s2 << 0
+    model.registerMBeans
+
+    new ModelViewer(model).show
+
+    model.s1 << 0
+    model.s2 << 0
 
     (1 to 1000000) foreach { v ⇒
-      MyModel.s1 << math.random * (math.random * v)
+      model.s1 << math.random * (math.random * v)
       Thread.sleep((math.random * 5).toInt)
-      MyModel.s3 << (math.random * 100).toInt
+      model.s3 << (math.random * 100).toInt
     }
+
+    Thread.sleep(10000)
+
+    as.shutdown
 
   }
 

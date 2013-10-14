@@ -1,13 +1,18 @@
 package org.retistruen.instrument
 
-import org.scalatest.Spec
-import org.scalatest.matchers.ShouldMatchers
-import org.retistruen._
-import Thread.sleep
+import java.lang.Thread.sleep
 
-class JoinerSpec extends Spec with ShouldMatchers {
+import org.retistruen.Datum
+import org.scalatest.FunSpec
+import org.scalatest.matchers.ShouldMatchers
+
+import akka.actor.ActorSystem
+
+class JoinerSpec extends FunSpec with ShouldMatchers {
 
   class Fixture {
+
+    implicit val sys = ActorSystem()
 
     val source1 = new SourceEmitter[Int]("s1")
     val source2 = new SourceEmitter[Int]("s2")
@@ -21,9 +26,10 @@ class JoinerSpec extends Spec with ShouldMatchers {
 
     joiner >> rec
 
-    joiner start
-
-    def apply(f: Fixture ⇒ Unit) = f(this)
+    def apply(f: Fixture ⇒ Unit) = {
+      f(this)
+      sys.shutdown
+    }
 
   }
 

@@ -1,6 +1,7 @@
 package org.retistruen
 
 import org.retistruen.building._
+import akka.actor.ActorSystem
 
 /**
  * Represents a complete network of Emitter and Receiver.
@@ -39,7 +40,7 @@ import org.retistruen.building._
  *
  *  @see [[org.retistruen.view.ModelViewer]]
  */
-class Model(val name: String) extends Named
+class Model(val name: String)(implicit val actorSystem: ActorSystem) extends Named
     with BuildingInfrastructure
     with InstrumentBuilding
     with CollectorBuilding

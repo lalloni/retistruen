@@ -5,8 +5,10 @@
 package org.retistruen.building
 
 import org.retistruen.Model
-import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.FunSuite
+import org.scalatest.matchers.ShouldMatchers
+
+import akka.actor.ActorSystem
 
 /**
  * @author Pablo Lalloni <plalloni@gmail.com>
@@ -15,6 +17,8 @@ import org.scalatest.FunSuite
 class BuildingSuite extends FunSuite with ShouldMatchers {
 
   test("Build a complex model") {
+
+    implicit val as = ActorSystem()
 
     val model = new Model("test") {
 
@@ -42,6 +46,10 @@ class BuildingSuite extends FunSuite with ShouldMatchers {
 
     model.s1 << 10
     model.s2 << 5
+
+    Thread.sleep(10000)
+
+    as.shutdown
 
   }
 
