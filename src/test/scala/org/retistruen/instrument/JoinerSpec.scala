@@ -73,14 +73,14 @@ class JoinerSpec extends FunSpec with ShouldMatchers {
           source3 << 1
         }
         sleep(10) // to wait for async emission
-        fix.rec.dataValues.size should be === 1
-        fix.rec.dataValues.last.map(_.value) should be === Seq(2, 1, 1)
-        fix.joiner.lastValue.map(_.map(_.value)) should be === Some(Seq(2, 1, 1))
+        fix.rec.dataValues.size shouldEqual 1
+        fix.rec.dataValues.last.map(_.value) shouldEqual Seq(2, 1, 1)
+        fix.joiner.lastValue.map(_.map(_.value)) shouldEqual Some(Seq(2, 1, 1))
         fix(_.source2 <<< (3, 4))
         sleep(10) // to wait for async emission
-        fix.rec.dataValues.size should be === 3
-        fix.rec.dataValues.map(_.map(_.value)) should be === Seq(Seq(2, 1, 1), Seq(2, 3, 1), Seq(2, 4, 1))
-        fix.joiner.lastValue.map(_.map(_.value)) should be === Some(Seq(2, 4, 1))
+        fix.rec.dataValues.size shouldEqual 3
+        fix.rec.dataValues.map(_.map(_.value)) shouldEqual Seq(Seq(2, 1, 1), Seq(2, 3, 1), Seq(2, 4, 1))
+        fix.joiner.lastValue.map(_.map(_.value)) shouldEqual Some(Seq(2, 4, 1))
       }
     }
 
